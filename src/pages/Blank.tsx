@@ -1,7 +1,68 @@
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import PageMeta from "../components/common/PageMeta";
+import Modal, { InputProps } from "../components/modal";
 
 export default function Blank() {
+  const fields: InputProps[] = [
+    {
+      type: "text",
+      name: "test",
+      placeholder: "Enter your email",
+      hint: "This is an invalid email address.",
+    },
+    {
+      type: "password",
+      name: "test",
+      placeholder: "Enter your email",
+      hint: "This is an invalid email address.",
+      disabled: true,
+    },
+    {
+      type: "email",
+      name: "test",
+      placeholder: "Enter your email",
+      hint: "This is an invalid email address.",
+      success: true,
+    },
+    {
+      type: "number",
+      name: "test",
+      placeholder: "Enter your email",
+      hint: "This is an invalid email address.",
+      error: true,
+    },
+    {
+      type: "select",
+      name: "test",
+      placeholder: "Select an option",
+      options: [
+        { value: "marketing", label: "Marketing" },
+        { value: "template", label: "Template" },
+        { value: "development", label: "Development" },
+      ],
+    },
+    {
+      type: "textarea",
+      name: "test",
+      placeholder: "Enter your email",
+      disabled: true,
+    },
+    {
+      type: "textarea",
+      name: "test",
+      placeholder: "Enter your email",
+    },
+    {
+      type: "file",
+    },
+    {
+      type: "checkbox",
+      label: "checkbox",
+    },
+    {
+      type: "dropzone",
+    },
+  ]
   return (
     <div>
       <PageMeta
@@ -19,6 +80,9 @@ export default function Blank() {
             Start putting content on grids or panels, you can also use different
             combinations of grids.Please check out the dashboard and other pages
           </p>
+
+          <Modal fields={fields} />
+
         </div>
       </div>
     </div>
