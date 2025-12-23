@@ -24,14 +24,9 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
+    name: "Manage",
     icon: <GridIcon />,
-    name: "Dashboard",
-    subItems: [{ name: "Ecommerce", path: "#!", pro: false }],
-  },
-  {
-    name: "Employees",
-    icon: <TableIcon />,
-    path: "employees",
+    subItems: [{ name: "Employees", path: "employees", pro: false }],
   },
   {
     icon: <CalenderIcon />,
@@ -99,7 +94,6 @@ const AppSidebar: React.FC = () => {
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // const isActive = (path: string) => location.pathname === path;
   const isActive = useCallback(
     (path: string) => location.pathname === path,
     [location.pathname]
@@ -297,12 +291,12 @@ const AppSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link to="/TailAdmin/">
+        <Link to="/home/">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <img
                 className="dark:hidden"
-                src="images/logo/logo.svg"
+                src="/images/logo/logo.svg"
                 alt="Logo"
                 width={150}
                 height={40}
