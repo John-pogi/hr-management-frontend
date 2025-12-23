@@ -5,64 +5,113 @@ import Modal, { InputProps } from "../components/modal";
 export default function Blank() {
   const fields: InputProps[] = [
     {
+      kind: 'basic',
       type: "text",
       name: "test",
-      placeholder: "Enter your email",
+      label: "Text Input",
+      placeholder: "Enter your text",
       hint: "This is an invalid email address.",
+      value: "TEST",
+      onChange: () => null,
     },
     {
+      kind: 'basic',
       type: "password",
-      name: "test",
-      placeholder: "Enter your email",
-      hint: "This is an invalid email address.",
+      name: "password",
+      label: "Password",
+      placeholder: "Enter your password",
       disabled: true,
+      value: "TEST",
+      onChange: () => null,
     },
     {
+      kind: 'basic',
       type: "email",
-      name: "test",
+      name: "email",
+      label: "Email",
       placeholder: "Enter your email",
-      hint: "This is an invalid email address.",
       success: true,
+      value: "TEST",
+      onChange: () => null,
     },
     {
+      kind: 'basic',
       type: "number",
-      name: "test",
-      placeholder: "Enter your email",
-      hint: "This is an invalid email address.",
+      name: "number",
+      label: "Number",
+      placeholder: "Enter number",
       error: true,
+      min: "0",
+      max: "100",
+      step: 1,
+      value: "TEST",
+      onChange: () => null,
     },
     {
-      type: "select",
-      name: "test",
+      kind: 'select',
+      name: "select",
+      label: "Category",
       placeholder: "Select an option",
       options: [
         { value: "marketing", label: "Marketing" },
         { value: "template", label: "Template" },
         { value: "development", label: "Development" },
       ],
+      value: "TEST",
+      onChange: () => null,
     },
     {
-      type: "textarea",
-      name: "test",
-      placeholder: "Enter your email",
+      kind: 'textarea',
+      name: "textarea1",
+      label: "Description (Disabled)",
+      placeholder: "Enter description",
+      rows: 4,
       disabled: true,
+      value: "TEST",
+      onChange: () => null,
     },
     {
-      type: "textarea",
-      name: "test",
-      placeholder: "Enter your email",
+      kind: 'textarea',
+      name: "textarea2",
+      label: "Description",
+      placeholder: "Enter description",
+      rows: 6,
+      hint: "Maximum 500 characters",
+      value: "TEST",
+      onChange: () => null,
     },
     {
-      type: "file",
+      kind: 'file',
+      label: "File Upload",
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        console.log('Files:', files);
+      }
     },
     {
-      type: "checkbox",
-      label: "checkbox",
+      kind: 'checkbox',
+      label: "Enable notifications",
+      checked: false,
+      onChange: () => null,
     },
     {
-      type: "dropzone",
+      kind: 'dropzone',
+      label: "Image Upload",
+      name: "images",
+      onChange: () => null,
     },
-  ]
+    {
+      kind: 'multi-select',
+      label: "Skills",
+      options: [
+        { value: "react", label: "React" },
+        { value: "typescript", label: "TypeScript" },
+        { value: "tailwind", label: "Tailwind CSS" }
+      ],
+      defaultSelected: [],
+      onChange: (values: string[]) => console.log('Selected skills:', values)
+    }
+  ];
   return (
     <div>
       <PageMeta
@@ -81,7 +130,7 @@ export default function Blank() {
             combinations of grids.Please check out the dashboard and other pages
           </p>
 
-          <Modal fields={fields} />
+          <Modal title="haha" desc="hahaha" fields={fields} />
 
         </div>
       </div>
