@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 
-// Assume these icons are imported from an icon library
 import {
   BoxCubeIcon,
   CalenderIcon,
@@ -11,12 +10,10 @@ import {
   ListIcon,
   PageIcon,
   PieChartIcon,
-  PlugInIcon,
   TableIcon,
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
@@ -30,6 +27,11 @@ const navItems: NavItem[] = [
     icon: <GridIcon />,
     name: "Dashboard",
     subItems: [{ name: "Ecommerce", path: "#!", pro: false }],
+  },
+  {
+    name: "Employees",
+    icon: <TableIcon />,
+    path: "employees",
   },
   {
     icon: <CalenderIcon />,
@@ -80,14 +82,6 @@ const othersItems: NavItem[] = [
       { name: "Buttons", path: "buttons", pro: false },
       { name: "Images", path: "images", pro: false },
       { name: "Videos", path: "videos", pro: false },
-    ],
-  },
-  {
-    icon: <PlugInIcon />,
-    name: "Authentication",
-    subItems: [
-      { name: "Sign In", path: "signin", pro: false },
-      { name: "Sign Up", path: "signup", pro: false },
     ],
   },
 ];
@@ -315,7 +309,7 @@ const AppSidebar: React.FC = () => {
               />
               <img
                 className="hidden dark:block"
-                src="./images/logo/logo-dark.svg"
+                src="/images/logo/logo-dark.svg"
                 alt="Logo"
                 width={150}
                 height={40}
@@ -323,7 +317,7 @@ const AppSidebar: React.FC = () => {
             </>
           ) : (
             <img
-              src="./images/logo/logo-icon.svg"
+              src="/images/logo/logo-icon.svg"
               alt="Logo"
               width={32}
               height={32}

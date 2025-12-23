@@ -1,8 +1,13 @@
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import PageMeta from "../components/common/PageMeta";
 import Modal, { InputProps } from "../components/modal";
+import { useState } from "react";
 
 export default function Blank() {
+  const [modal, setModal] = useState(true);
+  const handleCloseModal = () => {
+    setModal(false);
+  }
   const fields: InputProps[] = [
     {
       kind: 'basic',
@@ -115,7 +120,9 @@ export default function Blank() {
             combinations of grids.Please check out the dashboard and other pages
           </p>
 
-          <Modal title="haha" desc="hahaha" fields={fields} />
+          {!modal && <button onClick={() => setModal(true)} className="rounded-full px-5 py-3 bg-[rgba(0,0,255,0.5)] hover:opacity-90">Open Modal</button>}
+
+          {modal && <Modal style="pop-up" close={handleCloseModal} title="haha" desc="hahaha" fields={fields} />}
 
         </div>
       </div>
