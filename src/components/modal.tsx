@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import ComponentCard from "./common/ComponentCard";
 import Input from "./form/input/InputField";
 import TextArea from "./form/input/TextArea";
@@ -14,14 +14,11 @@ interface Option {
   label: string;
 }
 
-type StringHandler = (value: string) => void;
-type FileHandler = (files: File[]) => void;
-
 export interface InputPropsBase {
   id?: string;
   name?: string;
   placeholder?: string;
-  value?: string | number | boolean;
+  defaultValue?: string | number | boolean;
   min?: string;
   max?: string;
   step?: number;
@@ -42,40 +39,33 @@ interface BaseInputProps extends InputPropsBase {
 export interface BasicInputProps extends BaseInputProps {
   kind: 'basic';
   type: "text" | "number" | "email" | "password" | "date" | "time";
-  onChange: StringHandler;
 }
 
 export interface TextAreaInputProps extends BaseInputProps {
   kind: 'textarea';
-  onChange: StringHandler;
 }
 
 export interface CheckboxInputProps extends BaseInputProps {
   kind: 'checkbox';
-  onChange: (checked: boolean) => void;
 }
 
 export interface FileInputProps extends BaseInputProps {
   kind: 'file';
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 export interface SelectInputProps extends BaseInputProps {
   kind: 'select';
   options?: Option[];
-  onChange: StringHandler;
 }
 
 export interface MultiSelectInputProps extends BaseInputProps {
   kind: 'multi-select';
   options?: Option[];
   defaultSelected?: string[];
-  onChange: (values: string[]) => void;
 }
 
 export interface DropzoneInputProps extends BaseInputProps {
   kind: 'dropzone';
-  onChange: FileHandler;
 }
 
 export type InputProps =
@@ -114,10 +104,10 @@ const isMultiSelectInput = (field: InputProps): field is MultiSelectInputProps =
 const isDropzoneInput = (field: InputProps): field is DropzoneInputProps => 
   field.kind === 'dropzone';
 
-const DropzoneField = ({ field }: { field: DropzoneInputProps }) => {
+const DropzoneField = ({ field }: { field: DropzoneInputProps}) => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    field.onChange(acceptedFiles);
-  }, [field]);
+    console.log(acceptedFiles);
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -176,26 +166,24 @@ const DropzoneField = ({ field }: { field: DropzoneInputProps }) => {
 };
 
 export default function Modal({ title, desc, fields }: ModalProps) {
-
   return (
     <>
       <ComponentCard
         title={title || "default label"}
         desc={desc || "default desc"}
       >
-        {fields?.map((field, index) => {
-          if (isDropzoneInput(field)) {
-            return <DropzoneField key={field.name || index} field={field} />;
-          }
-
-          return (
+        {fields?.map((field, index) => (
+          <div key={index}>
+            {isDropzoneInput(field) ? (
+              <DropzoneField field={field} />
+            ) : (
               <div className="space-y-5 sm:space-y-6">
                 {isBasicInput(field) ? (
-                  <div key={index}>
+                  <div>
                     <Label>{field.label}</Label>
                     <Input
                       type={field.type}
-                      value={String(field.value ?? "")}
+                      defaultValue={String(field.defaultValue ?? "")}
                       placeholder={field.placeholder ?? ""}
                       min={field.min ?? ""}
                       max={field.max ?? ""}
@@ -203,33 +191,30 @@ export default function Modal({ title, desc, fields }: ModalProps) {
                       disabled={!!field.disabled}
                       error={!!field.error}
                       hint={field.hint ?? ""}
-                      onChange={(e) => field.onChange(e.target.value)}
                     />
                   </div>
                 ) : isTextAreaInput(field) ? (
-                  <div key={index}>
+                  <div>
                     <Label>{field.label}</Label>
                     <TextArea
-                      value={String(field.value ?? "")}
+                      defaultValue={String(field.defaultValue ?? "")}
                       placeholder={field.placeholder ?? ""}
                       rows={field.rows ?? 3}
                       disabled={!!field.disabled}
                       error={!!field.error}
                       hint={field.hint ?? ""}
-                      onChange={field.onChange}
                     />
                   </div>
                 ) : isSelectInput(field) ? (
-                  <div key={index}>
+                  <div>
                     <Label>{field.label}</Label>
                     <Select
                       options={field.options ?? []}
                       placeholder={field.placeholder ?? "Select Option"}
-                      onChange={field.onChange}
                     />
                   </div>
                 ) : isMultiSelectInput(field) ? (
-                  <div key={index}>
+                  <div>
                     <MultiSelect
                       label={field.label ?? "Multiple Select Options"}
                       options={(field.options ?? []).map(opt => ({ 
@@ -238,30 +223,28 @@ export default function Modal({ title, desc, fields }: ModalProps) {
                       }))}
                       defaultSelected={field.defaultSelected ?? []}
                       disabled={!!field.disabled}
-                      onChange={field.onChange}
                     />
                   </div>
                 ) : isFileInput(field) ? (
-                  <div key={index}>
+                  <div>
                     <Label>{field.label}</Label>
-                    <FileInput
-                      onChange={field.onChange}
-                    />
+                    <FileInput />
                   </div>
                 ) : isCheckboxInput(field) ? (
-                  <div className="flex items-center gap-3" key={index}>
+                  <div className="flex items-center gap-3">
                     <Checkbox
                       checked={!!field.checked}
                       disabled={!!field.disabled}
                       label={field.label ?? "Checkbox"}
-                      onChange={field.onChange}
                     />
                   </div>
                 ) : null}
               </div>
-          );
-        })}
+            )}
+          </div>
+        ))}
       </ComponentCard>
     </>
   );
 }
+

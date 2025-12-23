@@ -1,4 +1,3 @@
-import type React from "react";
 import type { FC } from "react";
 
 interface InputProps {
@@ -6,8 +5,7 @@ interface InputProps {
   id?: string;
   name?: string;
   placeholder?: string;
-  value?: string | number;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  defaultValue?: string | number;
   className?: string;
   min?: string;
   max?: string;
@@ -23,8 +21,7 @@ const Input: FC<InputProps> = ({
   id,
   name,
   placeholder,
-  value,
-  onChange,
+  defaultValue,
   className = "",
   min,
   max,
@@ -53,8 +50,7 @@ const Input: FC<InputProps> = ({
         id={id}
         name={name}
         placeholder={placeholder}
-        value={value}
-        onChange={onChange}
+        defaultValue={defaultValue}
         min={min}
         max={max}
         step={step}

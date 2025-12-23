@@ -10,9 +10,7 @@ export default function Blank() {
       name: "test",
       label: "Text Input",
       placeholder: "Enter your text",
-      hint: "This is an invalid email address.",
-      value: "TEST",
-      onChange: () => null,
+      defaultValue: "TEST",
     },
     {
       kind: 'basic',
@@ -21,8 +19,7 @@ export default function Blank() {
       label: "Password",
       placeholder: "Enter your password",
       disabled: true,
-      value: "TEST",
-      onChange: () => null,
+      defaultValue: "TEST",
     },
     {
       kind: 'basic',
@@ -31,8 +28,7 @@ export default function Blank() {
       label: "Email",
       placeholder: "Enter your email",
       success: true,
-      value: "TEST",
-      onChange: () => null,
+      defaultValue: "TEST",
     },
     {
       kind: 'basic',
@@ -44,8 +40,7 @@ export default function Blank() {
       min: "0",
       max: "100",
       step: 1,
-      value: "TEST",
-      onChange: () => null,
+      defaultValue: "TEST",
     },
     {
       kind: 'select',
@@ -57,8 +52,7 @@ export default function Blank() {
         { value: "template", label: "Template" },
         { value: "development", label: "Development" },
       ],
-      value: "TEST",
-      onChange: () => null,
+      defaultValue: "TEST",
     },
     {
       kind: 'textarea',
@@ -67,8 +61,7 @@ export default function Blank() {
       placeholder: "Enter description",
       rows: 4,
       disabled: true,
-      value: "TEST",
-      onChange: () => null,
+      defaultValue: "TEST",
     },
     {
       kind: 'textarea',
@@ -77,28 +70,21 @@ export default function Blank() {
       placeholder: "Enter description",
       rows: 6,
       hint: "Maximum 500 characters",
-      value: "TEST",
-      onChange: () => null,
+      defaultValue: "TEST",
     },
     {
       kind: 'file',
       label: "File Upload",
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || []);
-        console.log('Files:', files);
-      }
     },
     {
       kind: 'checkbox',
       label: "Enable notifications",
       checked: false,
-      onChange: () => null,
     },
     {
       kind: 'dropzone',
       label: "Image Upload",
       name: "images",
-      onChange: () => null,
     },
     {
       kind: 'multi-select',
@@ -109,7 +95,6 @@ export default function Blank() {
         { value: "tailwind", label: "Tailwind CSS" }
       ],
       defaultSelected: [],
-      onChange: (values: string[]) => console.log('Selected skills:', values)
     }
   ];
   return (
