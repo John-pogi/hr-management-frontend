@@ -1,12 +1,10 @@
 import { useState, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { EventInput, DateSelectArg, EventClickArg } from "@fullcalendar/core";
-import { Modal } from "../../components/ui/modal";
-import { useModal } from "../../hooks/useModal";
 import PageMeta from "../../components/common/PageMeta";
+import Modal, { InputProps } from "../../components/modal";
 interface CalendarEvent extends EventInput {
   extendedProps: {
     calendar: string;
@@ -20,40 +18,32 @@ const LeaveRequest: React.FC = () => {
   const [eventTitle, setEventTitle] = useState("");
   const [eventStartDate, setEventStartDate] = useState("");
   const [eventEndDate, setEventEndDate] = useState("");
+  const [eventPromoCode, setEventPromoCode] = useState("");
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const calendarRef = useRef<FullCalendar>(null);
-  const { isOpen, openModal, closeModal } = useModal();
+  const [modal, setModal] = useState(true);
 
-  // useEffect(() => {
-  //   // Initialize with some events
-  //   setEvents([
-  //     {
-  //       id: "1",
-  //       title: "Event Conf.",
-  //       start: new Date().toISOString().split("T")[0],
-  //       extendedProps: { calendar: "Danger" },
-  //     },
-  //     {
-  //       id: "2",
-  //       title: "Meeting",
-  //       start: new Date(Date.now() + 86400000).toISOString().split("T")[0],
-  //       extendedProps: { calendar: "Success" },
-  //     },
-  //     {
-  //       id: "3",
-  //       title: "Workshop",
-  //       start: new Date(Date.now() + 172800000).toISOString().split("T")[0],
-  //       end: new Date(Date.now() + 259200000).toISOString().split("T")[0],
-  //       extendedProps: { calendar: "Primary" },
-  //     },
-  //   ]);
-  // }, []);
+  const handleCloseModal = () => {
+    setModal(false);
+  }
+
+  const normalizeDate = (date: any): string => {
+    if (!date) return "";
+    
+    const tempDate = new Date(date);
+    tempDate.setDate(tempDate.getDate() - 1);
+    
+    const year = String(tempDate.getFullYear());
+    const month = String(tempDate.getMonth() + 1).padStart(2, '0');
+    const day = String(tempDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     resetModalFields();
     setEventStartDate(selectInfo.startStr);
-    setEventEndDate(selectInfo.endStr || selectInfo.startStr);
-    openModal();
+    setEventEndDate(normalizeDate(selectInfo.endStr) || selectInfo.startStr);
+    setModal(true);
   };
 
   const handleEventClick = (clickInfo: EventClickArg) => {
@@ -61,13 +51,12 @@ const LeaveRequest: React.FC = () => {
     setSelectedEvent(event as unknown as CalendarEvent);
     setEventTitle(event.title);
     setEventStartDate(event.start?.toISOString().split("T")[0] || "");
-    setEventEndDate(event.end?.toISOString().split("T")[0] || "");
-    openModal();
+    setEventEndDate(normalizeDate(event.end));
+    setModal(true);
   };
 
   const handleAddOrUpdateEvent = () => {
     if (selectedEvent) {
-      // Update existing event
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
           event.id === selectedEvent.id
@@ -82,7 +71,6 @@ const LeaveRequest: React.FC = () => {
         )
       );
     } else {
-      // Add new event
       const newEvent: CalendarEvent = {
         id: Date.now().toString(),
         title: eventTitle,
@@ -93,7 +81,7 @@ const LeaveRequest: React.FC = () => {
       };
       setEvents((prevEvents) => [...prevEvents, newEvent]);
     }
-    closeModal();
+    handleCloseModal();
     resetModalFields();
   };
 
@@ -101,21 +89,54 @@ const LeaveRequest: React.FC = () => {
     setEventTitle("");
     setEventStartDate("");
     setEventEndDate("");
+    setEventPromoCode("");
     setSelectedEvent(null);
   };
 
-  const options = [
-    { value: "Vacation Leave", label: "Vacation Leave" },
-    { value: "Vacation Leave Half-Day", label: "Vacation Leave Half-Day" },
-    { value: "Sick Leave", label: "Sick Leave" },
-    { value: "Sick Leave Half-Day", label: "Sick Leave Half-Day" },
-    { value: "Unpaid Leave", label: "Unpaid Leave" },
-    { value: "Unpaid Leave Half-Day", label: "Unpaid Leave Half-Day" },
-    { value: "Emergency Leave", label: "Emergency Leave" },
-    { value: "Maternity Leave", label: "Maternity Leave" },
-    { value: "Paternity Leave", label: "Paternity Leave" },
-    { value: "Undertime", label: "Undertime" },
-    { value: "Promo Leave", label: "Promo Leave" },
+  const fields: InputProps[] = [
+    {
+      kind: 'select',
+      name: "select",
+      label: "Request Type",
+      placeholder: "Select an option",
+      options: [
+        { value: "Vacation Leave", label: "Vacation Leave" },
+        { value: "Vacation Leave Half-Day", label: "Vacation Leave Half-Day" },
+        { value: "Sick Leave", label: "Sick Leave" },
+        { value: "Sick Leave Half-Day", label: "Sick Leave Half-Day" },
+        { value: "Unpaid Leave", label: "Unpaid Leave" },
+        { value: "Unpaid Leave Half-Day", label: "Unpaid Leave Half-Day" },
+        { value: "Emergency Leave", label: "Emergency Leave" },
+        { value: "Maternity Leave", label: "Maternity Leave" },
+        { value: "Paternity Leave", label: "Paternity Leave" },
+        { value: "Undertime", label: "Undertime" },
+        { value: "Promo Leave", label: "Promo Leave" },
+      ],
+      onChange: (e) => setEventTitle(e.target.value)
+    },
+    {
+      kind: 'basic',
+      type: "date",
+      name: "start-date",
+      label: "Start Date",
+      defaultValue: eventStartDate,
+    },
+    {
+      kind: 'basic',
+      type: "date",
+      name: "end-date",
+      label: "End Date",
+      defaultValue: eventEndDate,
+      min: eventStartDate,
+    },
+    ...(eventTitle && eventTitle === "Promo Leave" ? [{
+      kind: 'basic' as const,
+      type: "text" as const,
+      name: "promo-code",
+      label: "Promo Code",
+      placeholder: "Enter your promo code",
+      defaultValue: eventPromoCode,
+    }] : []),
   ];
 
   return (
@@ -128,12 +149,11 @@ const LeaveRequest: React.FC = () => {
         <div className="custom-calendar">
           <FullCalendar
             ref={calendarRef}
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            plugins={[dayGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
             headerToolbar={{
-              left: "prev,next addEventButton",
+              left: "addEventButton",
               center: "title",
-              right: "dayGridMonth,timeGridWeek",
             }}
             events={events}
             selectable={true}
@@ -143,125 +163,12 @@ const LeaveRequest: React.FC = () => {
             customButtons={{
               addEventButton: {
                 text: "Request Leave +",
-                click: openModal,
+                click: () => setModal(true),
               },
             }}
           />
         </div>
-        <Modal
-          isOpen={isOpen}
-          onClose={closeModal}
-          className="max-w-[700px] p-6 lg:p-10"
-        >
-          <div className="flex flex-col px-2 overflow-y-auto custom-scrollbar">
-            <div>
-              <h5 className="mb-2 font-semibold text-gray-800 modal-title text-theme-xl dark:text-white/90 lg:text-2xl">
-                Leave Request Form
-              </h5>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Plan your next leave: schedule a leave to stay on track
-              </p>
-            </div>
-            <div className="mt-8">
-              <div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                    Request Type
-                  </label>
-                  <select
-                    className={`h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 ${
-                      eventTitle
-                        ? "text-gray-800 dark:text-white/90"
-                        : "text-gray-400 dark:text-gray-400"
-                    } dark:bg-dark-900`}
-                    value={eventTitle}
-                    onChange={(e) => setEventTitle(e.target.value)}
-                    id="event-request-type"
-                  >
-                    <option
-                      value=""
-                      disabled
-                      className="text-gray-700 dark:bg-gray-900 dark:text-gray-400"
-                    >
-                      Select Option
-                    </option>
-
-                    {options.map((option) => (
-                      <option
-                        key={option.value}
-                        value={option.value}
-                        className="text-gray-700 dark:bg-gray-900 dark:text-gray-400"
-                      >
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-
-                  {eventTitle && eventTitle === "Promo Leave" && (
-                    <div className="ms-10 mt-3">
-                      <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                        Promo Code
-                      </label>
-
-                      <input
-                        id="event-promo-code"
-                        type="text"
-                        className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                      />
-                    </div>
-                  )}
-                  
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Enter Start Date
-                </label>
-                <div className="relative">
-                  <input
-                    id="event-start-date"
-                    type="date"
-                    value={eventStartDate}
-                    onChange={(e) => setEventStartDate(e.target.value)}
-                    className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Enter End Date
-                </label>
-                <div className="relative">
-                  <input
-                    id="event-end-date"
-                    type="date"
-                    value={eventEndDate}
-                    onChange={(e) => setEventEndDate(e.target.value)}
-                    className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 mt-6 modal-footer sm:justify-end">
-              <button
-                onClick={closeModal}
-                type="button"
-                className="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] sm:w-auto"
-              >
-                Close
-              </button>
-              <button
-                onClick={handleAddOrUpdateEvent}
-                type="button"
-                className="btn btn-success btn-update-event flex w-full justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 sm:w-auto"
-              >
-                {selectedEvent ? "Update Changes" : "Add Event"}
-              </button>
-            </div>
-          </div>
-        </Modal>
+        {modal && <Modal style="pop-up" close={handleCloseModal} submit={handleAddOrUpdateEvent} title="Leave Request Form" desc="Plan your next leave: schedule a leave to stay on track" fields={fields} />}
       </div>
     </>
   );
@@ -271,11 +178,15 @@ const renderEventContent = (eventInfo: any) => {
   const colorClass = `fc-bg-${eventInfo.event.extendedProps.calendar.toLowerCase()}`;
   return (
     <div
-      className={`event-fc-color flex fc-event-main ${colorClass} p-1 rounded`}
+      className={`event-fc-color flex flex-row justify-start items-center fc-event-main ${colorClass} p-1 rounded`}
     >
-      <div className="fc-daygrid-event-dot"></div>
-      <div className="fc-event-time">{eventInfo.timeText}</div>
-      <div className="fc-event-title">{eventInfo.event.title}</div>
+      <div className="w-5">
+        <div className="fc-daygrid-event-dot"></div>
+      </div>
+      <div>
+        <div className="fc-event-time text-gray-400">{eventInfo.event.start?.toISOString().split("T")[0]} - {eventInfo.event.end?.toISOString().split("T")[0]}</div>
+        <div className="fc-event-title">{eventInfo.event.title}</div>
+      </div>
     </div>
   );
 };

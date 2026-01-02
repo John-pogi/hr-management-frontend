@@ -57,6 +57,7 @@ export interface FileInputProps extends BaseInputProps {
 export interface SelectInputProps extends BaseInputProps {
   kind: 'select';
   options?: Option[];
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 export interface MultiSelectInputProps extends BaseInputProps {
@@ -84,6 +85,7 @@ interface ModalProps {
   desc?: string;
   style?: string;
   close: () => void;
+  submit: () => void;
 }
 
 const isBasicInput = (field: InputProps): field is BasicInputProps => 
@@ -168,10 +170,14 @@ const DropzoneField = ({ field }: { field: DropzoneInputProps}) => {
   );
 };
 
-export default function Modal({ style = "pop-up", close, title, desc, fields }: ModalProps) {
+export default function Modal({ style = "pop-up", close, submit, title, desc, fields }: ModalProps) {
   const handleClose = () => {
     const confirmation = confirm("Do you wish to exit?");
     if (confirmation) close();
+  }
+
+  const handleSubmit = () => {
+    submit();
   }
 
   return (
@@ -258,6 +264,12 @@ export default function Modal({ style = "pop-up", close, title, desc, fields }: 
                       <Select
                         options={field.options ?? []}
                         placeholder={field.placeholder ?? "Select Option"}
+                        onChange={(value) => {
+                          const syntheticEvent = {
+                            target: { value }
+                          } as React.ChangeEvent<HTMLSelectElement>;
+                          (field.onChange as (e: React.ChangeEvent<HTMLSelectElement>) => void)(syntheticEvent);
+                        }}
                       />
                     </div>
                   ) : isMultiSelectInput(field) ? (
@@ -294,7 +306,7 @@ export default function Modal({ style = "pop-up", close, title, desc, fields }: 
             <Button size="sm" variant="outline" onClick={handleClose}>
               Close
             </Button>
-            <Button size="sm" onClick={() => ''}>
+            <Button size="sm" onClick={handleSubmit}>
               Submit
             </Button>
           </div>
