@@ -12,7 +12,8 @@ import LineChart from "./pages/Charts/LineChart";
 import BarChart from "./pages/Charts/BarChart";
 import Calendar from "./pages/Calendar";
 import BasicTables from "./pages/Tables/BasicTables";
-import Employees from "./pages/Tables/Employees";
+import Employees from "./pages/Manage/Employees";
+import LeaveRequest from "./pages/Manage/LeaveRequest";
 import FormElements from "./pages/Forms/FormElements";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
@@ -34,6 +35,10 @@ export default function App() {
           <Route path="/home/" element={<AppLayout />}>
             <Route index element={<Home />} />
 
+            {/* Manage Module */}
+            <Route path="employees" element={<Employees />} />
+            <Route path="leave-request" element={<LeaveRequest />} />
+
             {/* Others Page */}
             <Route path="profile" element={<UserProfiles />} />
             <Route path="calendar" element={<Calendar />} />
@@ -44,7 +49,6 @@ export default function App() {
 
             {/* Tables */}
             <Route path="basic-tables" element={<BasicTables />} />
-            <Route path="employees" element={<Employees />} />
 
             {/* Ui Elements */}
             <Route path="alerts" element={<Alerts />} />

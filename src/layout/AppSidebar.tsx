@@ -26,7 +26,10 @@ const navItems: NavItem[] = [
   {
     name: "Manage",
     icon: <GridIcon />,
-    subItems: [{ name: "Employees", path: "employees", pro: false }],
+    subItems: [
+      { name: "Employees", path: "employees", pro: false }, 
+      { name: "Leave Requst", path: "leave-request", pro: false }
+    ],
   },
   {
     icon: <CalenderIcon />,

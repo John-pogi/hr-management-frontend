@@ -10,9 +10,11 @@ interface SelectProps {
   placeholder?: string;
   className?: string;
   defaultValue?: string;
+  id?: string;
 }
 
 const Select: React.FC<SelectProps> = ({
+  id = "",
   options,
   placeholder = "Select an option",
   className = "",
@@ -35,6 +37,7 @@ const Select: React.FC<SelectProps> = ({
       } ${className}`}
       value={selectedValue}
       onChange={handleChange}
+      id={id}
     >
       {/* Placeholder option */}
       <option
