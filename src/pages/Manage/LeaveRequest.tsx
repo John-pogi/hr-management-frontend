@@ -27,7 +27,7 @@ const LeaveRequest: React.FC = () => {
     setModal(false);
   }
 
-  const normalizeEndDate = (date: any): string => {
+  const renderDate = (date: any): string => {
     if (!date) return "";
     
     const tempDate = new Date(date);
@@ -39,10 +39,22 @@ const LeaveRequest: React.FC = () => {
     return `${year}-${month}-${day}`;
   };
 
+  const processDate = (date: any): string => {
+    if (!date) return "";
+    
+    const tempDate = new Date(date);
+    tempDate.setDate(tempDate.getDate() + 1);
+    
+    const year = String(tempDate.getFullYear());
+    const month = String(tempDate.getMonth() + 1).padStart(2, '0');
+    const day = String(tempDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     resetModalFields();
     setEventStartDate(selectInfo.startStr);
-    setEventEndDate(normalizeEndDate(selectInfo.endStr));
+    setEventEndDate(renderDate(selectInfo.endStr));
     setModal(true);
   };
 
@@ -55,7 +67,7 @@ const LeaveRequest: React.FC = () => {
         id: Date.now().toString(),
         title: eventTitle,
         start: eventStartDate,
-        end: eventEndDate,
+        end: processDate(eventEndDate),
         allDay: true,
         extendedProps: { calendar: "warning" },
       };
