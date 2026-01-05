@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { createBrowserRouter } from "react-router-dom";
 import SignIn from "./pages/AuthPages/SignIn";
 import NotFound from "./pages/OtherPage/NotFound";
 import UserProfiles from "./pages/UserProfiles";
@@ -18,63 +18,93 @@ import FormElements from "./pages/Forms/FormElements";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import IndexLayout from "./layout/IndexLayout";
-import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
-import { QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import Companies from './pages/Companies/Index'; 
 
-const queryClient = new QueryClient();
-
-export default function App() {
-  return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <Router>
-          <ScrollToTop />
-          <Routes>
-            <Route path="/" element={<IndexLayout />}>
-              <Route index element={<SignIn />} />
-            </Route>
-
-            {/* Dashboard Layout */}
-            <Route path="/home/" element={<AppLayout />}>u
-              <Route index element={<Home />} />
-
-              {/* Manage Module */}
-              <Route path="employees" element={<Employees />} />
-              <Route path="leave-request" element={<LeaveRequest />} />
-
-              <Route path="companies" element={<Companies />} />
-
-              {/* Others Page */}
-              <Route path="profile" element={<UserProfiles />} />
-              <Route path="calendar" element={<Calendar />} />
-              <Route path="blank" element={<Blank />} />
-
-              {/* Forms */}
-              <Route path="form-elements" element={<FormElements />} />
-
-              {/* Tables */}
-              <Route path="basic-tables" element={<BasicTables />} />
-
-              {/* Ui Elements */}
-              <Route path="alerts" element={<Alerts />} />
-              <Route path="avatars" element={<Avatars />} />
-              <Route path="badge" element={<Badges />} />
-              <Route path="buttons" element={<Buttons />} />
-              <Route path="images" element={<Images />} />
-              <Route path="videos" element={<Videos />} />
-
-              {/* Charts */}
-              <Route path="line-chart" element={<LineChart />} />
-              <Route path="bar-chart" element={<BarChart />} />
-            </Route>
-
-            {/* Fallback Route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Router>
-      </QueryClientProvider>
-    </>
-  );
-}
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <IndexLayout />,
+    errorElement: <NotFound />,
+    children: [
+      {
+        index: true,
+        element: <SignIn />,
+      },
+    ],
+  },
+  {
+    path: "/home",
+    element: <AppLayout />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: "employees",
+        element: <Employees />,
+      },
+      {
+        path: "leave-request",
+        element: <LeaveRequest />,
+      },
+      {
+        path: "companies",
+        element: <Companies />,
+      },
+      {
+        path: "profile",
+        element: <UserProfiles />,
+      },
+      {
+        path: "calendar",
+        element: <Calendar />,
+      },
+      {
+        path: "blank",
+        element: <Blank />,
+      },
+      {
+        path: "form-elements",
+        element: <FormElements />,
+      },
+      {
+        path: "basic-tables",
+        element: <BasicTables />,
+      },
+      {
+        path: "alerts",
+        element: <Alerts />,
+      },
+      {
+        path: "avatars",
+        element: <Avatars />,
+      },
+      {
+        path: "badge",
+        element: <Badges />,
+      },
+      {
+        path: "buttons",
+        element: <Buttons />,
+      },
+      {
+        path: "images",
+        element: <Images />,
+      },
+      {
+        path: "videos",
+        element: <Videos />,
+      },
+      {
+        path: "line-chart",
+        element: <LineChart />,
+      },
+      {
+        path: "bar-chart",
+        element: <BarChart />,
+      },
+    ],
+  },
+]);
