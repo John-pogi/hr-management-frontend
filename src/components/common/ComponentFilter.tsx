@@ -15,7 +15,8 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
 }) => {
   const [modal, setModal] = useState(false);
   const [company, setCompany] = useState("");
-  const inputClasses = `h-11 rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-none focus:ring  dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 ${className}`;
+  const [department, setDepartment] = useState("");
+  const inputClasses = `h-11 w-full min-w-[200px] overflow-auto rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-none focus:ring  dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 ${className}`;
   
   const handleCloseModal = () => {
     setModal(false);
@@ -34,6 +35,21 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
       defaultValue: company,
       onChange: (e) => setCompany(e.target.value),
     },
+    {
+      kind: 'select',
+      name: "department",
+      label: "Department",
+      placeholder: "Select an option",
+      options: [
+        { value: "IT-Dev", label: "IT-Dev" },
+        { value: "CMT", label: "CMT" },
+        { value: "Dev-Ops", label: "Dev-Ops" },
+        { value: "CS", label: "CS" },
+        { value: "HR", label: "HR" },
+      ],
+      defaultValue: department,
+      onChange: (e) => setDepartment(e.target.value),
+    },
   ];
 
   return (
@@ -50,7 +66,7 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
           onChange={onChange}
         />
 
-        <button type="button" className="border border-black hover:bg-black px-5 rounded-md" onClick={() => setModal(true)}>Filters</button>
+        <button type="button" className="border border-[2px] border-gray-300 dark:border-[#3E3D4E] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.05)] text-blue-500 px-5 rounded-md transition-all duration-200" onClick={() => setModal(true)}>Filters</button>
       </div>
 
       {modal && <Modal style="pop-up" close={handleCloseModal} submit={() => null} title="Filters" desc="Narrow data result for faster management." fields={fields} />}
