@@ -36,6 +36,11 @@ const navItems: NavItem[] = [
     name: "User Profile",
     path: "profile",
   },
+  {
+    icon: <UserCircleIcon />,
+    name: "Companies",
+    path: "companies",
+  },
 ];
 
 const AppSidebar: React.FC = () => {

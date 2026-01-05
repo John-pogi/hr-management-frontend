@@ -40,6 +40,9 @@ const LeaveRequest: React.FC = () => {
   };
 
   const handleDateSelect = (selectInfo: DateSelectArg) => {
+
+    console.log(selectInfo);
+
     resetModalFields();
     setEventStartDate(selectInfo.startStr);
     setEventEndDate(normalizeDate(selectInfo.endStr) || selectInfo.startStr);

@@ -20,53 +20,61 @@ import AppLayout from "./layout/AppLayout";
 import IndexLayout from "./layout/IndexLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import { QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import Companies from './pages/Companies/Index'; 
+
+const queryClient = new QueryClient();
 
 export default function App() {
   return (
     <>
-      <Router>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<IndexLayout />}>
-            <Route index element={<SignIn />} />
-          </Route>
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<IndexLayout />}>
+              <Route index element={<SignIn />} />
+            </Route>
 
-          {/* Dashboard Layout */}
-          <Route path="/home/" element={<AppLayout />}>
-            <Route index element={<Home />} />
+            {/* Dashboard Layout */}
+            <Route path="/home/" element={<AppLayout />}>u
+              <Route index element={<Home />} />
 
-            {/* Manage Module */}
-            <Route path="employees" element={<Employees />} />
-            <Route path="leave-request" element={<LeaveRequest />} />
+              {/* Manage Module */}
+              <Route path="employees" element={<Employees />} />
+              <Route path="leave-request" element={<LeaveRequest />} />
 
-            {/* Others Page */}
-            <Route path="profile" element={<UserProfiles />} />
-            <Route path="calendar" element={<Calendar />} />
-            <Route path="blank" element={<Blank />} />
+              <Route path="companies" element={<Companies />} />
 
-            {/* Forms */}
-            <Route path="form-elements" element={<FormElements />} />
+              {/* Others Page */}
+              <Route path="profile" element={<UserProfiles />} />
+              <Route path="calendar" element={<Calendar />} />
+              <Route path="blank" element={<Blank />} />
 
-            {/* Tables */}
-            <Route path="basic-tables" element={<BasicTables />} />
+              {/* Forms */}
+              <Route path="form-elements" element={<FormElements />} />
 
-            {/* Ui Elements */}
-            <Route path="alerts" element={<Alerts />} />
-            <Route path="avatars" element={<Avatars />} />
-            <Route path="badge" element={<Badges />} />
-            <Route path="buttons" element={<Buttons />} />
-            <Route path="images" element={<Images />} />
-            <Route path="videos" element={<Videos />} />
+              {/* Tables */}
+              <Route path="basic-tables" element={<BasicTables />} />
 
-            {/* Charts */}
-            <Route path="line-chart" element={<LineChart />} />
-            <Route path="bar-chart" element={<BarChart />} />
-          </Route>
+              {/* Ui Elements */}
+              <Route path="alerts" element={<Alerts />} />
+              <Route path="avatars" element={<Avatars />} />
+              <Route path="badge" element={<Badges />} />
+              <Route path="buttons" element={<Buttons />} />
+              <Route path="images" element={<Images />} />
+              <Route path="videos" element={<Videos />} />
 
-          {/* Fallback Route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
+              {/* Charts */}
+              <Route path="line-chart" element={<LineChart />} />
+              <Route path="bar-chart" element={<BarChart />} />
+            </Route>
+
+            {/* Fallback Route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Router>
+      </QueryClientProvider>
     </>
   );
 }
