@@ -1,22 +1,22 @@
-import clsx from "clsx"; // Install with: npm install clsx
+import clsx from "clsx";
+import { useState } from "react";
 
 interface CheckboxProps {
   label?: string;
   checked: boolean;
   className?: string;
-  id?: string;
-  onChange: (checked: boolean) => void;
+  name?: string;
   disabled?: boolean;
 }
 
 const Checkbox: React.FC<CheckboxProps> = ({
   label,
-  checked,
-  id,
-  onChange,
+  checked = false,
+  name,
   className = "",
   disabled = false,
 }) => {
+  const [check, setCheck] = useState(checked);
   return (
     <label
       className={clsx(
@@ -25,7 +25,8 @@ const Checkbox: React.FC<CheckboxProps> = ({
       )}
     >
       <input
-        id={id}
+        id="checkbox"
+        name={name}
         type="checkbox"
         className={clsx(
           "w-4 h-4 border-gray-300 rounded focus:ring-2 focus:ring-brand-500",
@@ -33,11 +34,11 @@ const Checkbox: React.FC<CheckboxProps> = ({
           "focus:ring-offset-0 focus:outline-none",
           className
         )}
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
+        checked={check}
+        onChange={() => setCheck(() => !check) }
         disabled={disabled}
       />
-      {label && <span className="text-sm font-medium">{label}</span>}
+      {label && <span className="text-sm font-medium select-none">{label}</span>}
     </label>
   );
 };

@@ -1,13 +1,11 @@
-import type React from "react";
-import type { FC } from "react";
+import type { FC, ChangeEvent  } from "react";
 
 interface InputProps {
   type?: "text" | "number" | "email" | "password" | "date" | "time" | string;
   id?: string;
   name?: string;
   placeholder?: string;
-  value?: string | number;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  defaultValue?: string | number;
   className?: string;
   min?: string;
   max?: string;
@@ -16,6 +14,8 @@ interface InputProps {
   success?: boolean;
   error?: boolean;
   hint?: string;
+  value?: string | number | readonly string[];
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Input: FC<InputProps> = ({
@@ -23,8 +23,7 @@ const Input: FC<InputProps> = ({
   id,
   name,
   placeholder,
-  value,
-  onChange,
+  defaultValue,
   className = "",
   min,
   max,
@@ -33,6 +32,8 @@ const Input: FC<InputProps> = ({
   success = false,
   error = false,
   hint,
+  value,
+  onChange,
 }) => {
   let inputClasses = ` h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-none focus:ring  dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 ${className}`;
 
@@ -53,13 +54,14 @@ const Input: FC<InputProps> = ({
         id={id}
         name={name}
         placeholder={placeholder}
-        value={value}
-        onChange={onChange}
+        defaultValue={defaultValue}
         min={min}
         max={max}
         step={step}
         disabled={disabled}
         className={inputClasses}
+        value={value}
+        onChange={onChange}
       />
 
       {hint && (

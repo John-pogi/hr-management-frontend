@@ -5,7 +5,7 @@
     "type": "module",
     "homepage": "https://themewagon.github.io/TailAdmin",
     "scripts": {
-        "dev": "vite",
+        "dev": "vite --open",
         "build": "vite build",
         "deploy": "vite build && gh-pages --dotfiles -d dist",
         "lint": "eslint .",

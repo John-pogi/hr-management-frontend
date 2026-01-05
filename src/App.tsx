@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
-import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
 import UserProfiles from "./pages/UserProfiles";
 import Videos from "./pages/UiElements/Videos";
@@ -13,9 +12,12 @@ import LineChart from "./pages/Charts/LineChart";
 import BarChart from "./pages/Charts/BarChart";
 import Calendar from "./pages/Calendar";
 import BasicTables from "./pages/Tables/BasicTables";
+import Employees from "./pages/Manage/Employees";
+import LeaveRequest from "./pages/Manage/LeaveRequest";
 import FormElements from "./pages/Forms/FormElements";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
+import IndexLayout from "./layout/IndexLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 
@@ -25,9 +27,17 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Routes>
+          <Route path="/" element={<IndexLayout />}>
+            <Route index element={<SignIn />} />
+          </Route>
+
           {/* Dashboard Layout */}
-          <Route path="/TailAdmin/" element={<AppLayout />}>
+          <Route path="/home/" element={<AppLayout />}>
             <Route index element={<Home />} />
+
+            {/* Manage Module */}
+            <Route path="employees" element={<Employees />} />
+            <Route path="leave-request" element={<LeaveRequest />} />
 
             {/* Others Page */}
             <Route path="profile" element={<UserProfiles />} />
@@ -52,10 +62,6 @@ export default function App() {
             <Route path="line-chart" element={<LineChart />} />
             <Route path="bar-chart" element={<BarChart />} />
           </Route>
-
-          {/* Auth Layout */}
-          <Route path="/TailAdmin/signin" element={<SignIn />} />
-          <Route path="/TailAdmin/signup" element={<SignUp />} />
 
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />
