@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { EventInput, DateSelectArg, EventClickArg } from "@fullcalendar/core";
+import { EventInput, DateSelectArg } from "@fullcalendar/core";
 import PageMeta from "../../components/common/PageMeta";
 import Modal, { InputProps } from "../../components/modal";
 interface CalendarEvent extends EventInput {
@@ -21,13 +21,13 @@ const LeaveRequest: React.FC = () => {
   const [eventPromoCode, setEventPromoCode] = useState("");
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const calendarRef = useRef<FullCalendar>(null);
-  const [modal, setModal] = useState(true);
+  const [modal, setModal] = useState(false);
 
   const handleCloseModal = () => {
     setModal(false);
   }
 
-  const normalizeDate = (date: any): string => {
+  const normalizeEndDate = (date: any): string => {
     if (!date) return "";
     
     const tempDate = new Date(date);
@@ -42,35 +42,15 @@ const LeaveRequest: React.FC = () => {
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     resetModalFields();
     setEventStartDate(selectInfo.startStr);
-    setEventEndDate(normalizeDate(selectInfo.endStr) || selectInfo.startStr);
-    setModal(true);
-  };
-
-  const handleEventClick = (clickInfo: EventClickArg) => {
-    const event = clickInfo.event;
-    setSelectedEvent(event as unknown as CalendarEvent);
-    setEventTitle(event.title);
-    setEventStartDate(event.start?.toISOString().split("T")[0] || "");
-    setEventEndDate(normalizeDate(event.end));
+    setEventEndDate(normalizeEndDate(selectInfo.endStr));
     setModal(true);
   };
 
   const handleAddOrUpdateEvent = () => {
-    if (selectedEvent) {
-      setEvents((prevEvents) =>
-        prevEvents.map((event) =>
-          event.id === selectedEvent.id
-            ? {
-                ...event,
-                title: eventTitle,
-                start: eventStartDate,
-                end: eventEndDate,
-                extendedProps: { calendar: "warning" },
-              }
-            : event
-        )
-      );
-    } else {
+    try {
+      if (selectedEvent) throw console.error("stop update");
+      if (!eventTitle) throw console.error("Please select a request type.");
+      if (eventTitle === "Promo Leave" && !eventPromoCode) throw console.error("Please provide your promo code.");
       const newEvent: CalendarEvent = {
         id: Date.now().toString(),
         title: eventTitle,
@@ -80,9 +60,16 @@ const LeaveRequest: React.FC = () => {
         extendedProps: { calendar: "warning" },
       };
       setEvents((prevEvents) => [...prevEvents, newEvent]);
+      handleCloseModal();
+      resetModalFields();
+    } catch(err) {
+      console.log(err)
+    } finally {
+      console.log(eventTitle)
+      console.log(eventStartDate)
+      console.log(eventEndDate)
+      console.log(eventPromoCode)
     }
-    handleCloseModal();
-    resetModalFields();
   };
 
   const resetModalFields = () => {
@@ -112,7 +99,8 @@ const LeaveRequest: React.FC = () => {
         { value: "Undertime", label: "Undertime" },
         { value: "Promo Leave", label: "Promo Leave" },
       ],
-      onChange: (e) => setEventTitle(e.target.value)
+      defaultValue: eventTitle,
+      onChange: (e) => setEventTitle(e.target.value),
     },
     {
       kind: 'basic',
@@ -136,6 +124,7 @@ const LeaveRequest: React.FC = () => {
       label: "Promo Code",
       placeholder: "Enter your promo code",
       defaultValue: eventPromoCode,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEventPromoCode(e.target.value),
     }] : []),
   ];
 
@@ -158,7 +147,6 @@ const LeaveRequest: React.FC = () => {
             events={events}
             selectable={true}
             select={handleDateSelect}
-            eventClick={handleEventClick}
             eventContent={renderEventContent}
             customButtons={{
               addEventButton: {
@@ -176,6 +164,19 @@ const LeaveRequest: React.FC = () => {
 
 const renderEventContent = (eventInfo: any) => {
   const colorClass = `fc-bg-${eventInfo.event.extendedProps.calendar.toLowerCase()}`;
+  
+  const normalizeRenderDate = (date: any): string => {
+    if (!date) return "";
+    
+    const tempDate = new Date(date);
+    tempDate.setDate(tempDate.getDate() + 1);
+    
+    const year = String(tempDate.getFullYear());
+    const month = String(tempDate.getMonth() + 1).padStart(2, '0');
+    const day = String(tempDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   return (
     <div
       className={`event-fc-color flex flex-row justify-start items-center fc-event-main ${colorClass} p-1 rounded`}
@@ -184,7 +185,15 @@ const renderEventContent = (eventInfo: any) => {
         <div className="fc-daygrid-event-dot"></div>
       </div>
       <div>
-        <div className="fc-event-time text-gray-400">{eventInfo.event.start?.toISOString().split("T")[0]} - {eventInfo.event.end?.toISOString().split("T")[0]}</div>
+        {eventInfo.event.end ? (
+          <div className="fc-event-time text-gray-400">
+            {normalizeRenderDate(eventInfo.event.start?.toISOString().split("T")[0])} - {normalizeRenderDate(eventInfo.event.end?.toISOString().split("T")[0])}
+          </div>
+        ) : (
+          <div className="fc-event-time text-gray-400">
+            {normalizeRenderDate(eventInfo.event.start?.toISOString().split("T")[0])}
+          </div>
+        )}
         <div className="fc-event-title">{eventInfo.event.title}</div>
       </div>
     </div>

@@ -40,6 +40,7 @@ interface BaseInputProps extends InputPropsBase {
 export interface BasicInputProps extends BaseInputProps {
   kind: 'basic';
   type: "text" | "number" | "email" | "password" | "date" | "time";
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export interface TextAreaInputProps extends BaseInputProps {
@@ -57,6 +58,7 @@ export interface FileInputProps extends BaseInputProps {
 export interface SelectInputProps extends BaseInputProps {
   kind: 'select';
   options?: Option[];
+  defaultValue?: string | number | boolean;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
@@ -244,6 +246,7 @@ export default function Modal({ style = "pop-up", close, submit, title, desc, fi
                         disabled={!!field.disabled}
                         error={!!field.error}
                         hint={field.hint ?? ""}
+                        onChange={field.onChange}
                       />
                     </div>
                   ) : isTextAreaInput(field) ? (
@@ -264,6 +267,7 @@ export default function Modal({ style = "pop-up", close, submit, title, desc, fi
                       <Select
                         options={field.options ?? []}
                         placeholder={field.placeholder ?? "Select Option"}
+                        defaultValue={String(field.defaultValue ?? "")}
                         onChange={(value) => {
                           const syntheticEvent = {
                             target: { value }
