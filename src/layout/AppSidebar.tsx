@@ -31,6 +31,11 @@ const navItems: NavItem[] = [
     name: "Forms",
     path: "form-elements",
   },
+  {
+    icon: <UserCircleIcon />,
+    name: "Companies",
+    path: "companies",
+  },
 ];
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();

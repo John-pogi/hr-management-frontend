@@ -19,7 +19,7 @@ export interface InputPropsBase {
   id?: string;
   name?: string;
   placeholder?: string;
-  defaultValue?: string | number | boolean;
+  defaultValue?: string | number | boolean | null;
   min?: string;
   max?: string;
   step?: number;
