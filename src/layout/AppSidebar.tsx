@@ -5,7 +5,6 @@ import {
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
-  UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -22,13 +21,9 @@ const navItems: NavItem[] = [
     icon: <GridIcon />,
     subItems: [
       { name: "Employees", path: "employees", pro: false }, 
-      { name: "Leave Requst", path: "leave-request", pro: false }
+      { name: "Leave Requst", path: "leave-request", pro: false },
+      { name: "Companies", path: "companies", pro: false },
     ],
-  },
-  {
-    icon: <UserCircleIcon />,
-    name: "Companies",
-    path: "companies",
   },
 ];
 const AppSidebar: React.FC = () => {

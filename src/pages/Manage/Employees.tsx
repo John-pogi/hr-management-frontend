@@ -2,7 +2,7 @@ import ComponentFilter from "../../components/common/ComponentFilter";
 import PageMeta from "../../components/common/PageMeta";
 import EmployeeTable from "../../components/tables/BasicTables/EmployeeTable";
 
-export default function BasicTables() {
+export default function Employees() {
   return (
     <>
       <PageMeta

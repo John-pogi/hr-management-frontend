@@ -45,7 +45,7 @@ export default function Pagination({ onClickNext, onClickPrev, onChange, total ,
 
     return<>
 
-    <div className="flex items-center gap-1 p-2   rounded-lg max-w-max bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300">
+    <div className="flex items-center gap-1 h-11 min-w-[275px] px-2 py-2.5 rounded-lg max-w-max border border-[2px] border-gray-300 dark:border-[#3E3D4E] text-blue-500 hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.05)]">
          
          <button disabled={isPrevDisabled} onClick={onClickPrev} className="pr-2 dark:border-gray-700 border-r">
             <ChevronLeftIcon className={`text-[24px] ${isPrevDisabled ? '!text-gray-300 dark:!text-gray-700' : ''}`}/>
@@ -54,7 +54,7 @@ export default function Pagination({ onClickNext, onClickPrev, onChange, total ,
         <select  
             value={selectedOption}
             onChange={handleOnChange} 
-            className="border-none outline-none text-gray-700 bg-transparent dark:text-gray-400">
+            className="border-none outline-none text-blue-500 bg-transparent">
                 {options.map(option => (
                     <option value={option.value}>{option.label}</option>
                 ))}
