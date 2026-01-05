@@ -67,7 +67,7 @@ const LeaveRequest: React.FC = () => {
         id: Date.now().toString(),
         title: eventTitle,
         start: eventStartDate,
-        end: processDate(eventEndDate),
+        end: eventStartDate === eventEndDate ? eventEndDate : processDate(eventEndDate),
         allDay: true,
         extendedProps: { calendar: "warning" },
       };
