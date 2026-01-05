@@ -1,4 +1,4 @@
-import ComponentCard from "../../components/common/ComponentCard";
+import ComponentFilter from "../../components/common/ComponentFilter";
 import PageMeta from "../../components/common/PageMeta";
 import EmployeeTable from "../../components/tables/BasicTables/EmployeeTable";
 
@@ -10,9 +10,9 @@ export default function BasicTables() {
         description="This page handle employee CRUD functionalities."
       />
       <div className="space-y-6">
-        <ComponentCard title="Employee Table">
+        <ComponentFilter>
           <EmployeeTable />
-        </ComponentCard>
+        </ComponentFilter>
       </div>
     </>
   );

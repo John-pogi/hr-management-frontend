@@ -27,7 +27,7 @@ const LeaveRequest: React.FC = () => {
     setModal(false);
   }
 
-  const renderDate = (date: any): string => {
+  const renderDate = (date: Date | string | number): string => {
     if (!date) return "";
     
     const tempDate = new Date(date);
@@ -39,7 +39,7 @@ const LeaveRequest: React.FC = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const processDate = (date: any): string => {
+  const processDate = (date: Date | string | number): string => {
     if (!date) return "";
     
     const tempDate = new Date(date);
@@ -146,7 +146,7 @@ const LeaveRequest: React.FC = () => {
         title="Leave Request"
         description="This page handle leave request functionalities."
       />
-      <div className="rounded-2xl border  border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+      <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
         <div className="custom-calendar">
           <FullCalendar
             ref={calendarRef}
@@ -177,7 +177,7 @@ const LeaveRequest: React.FC = () => {
 const renderEventContent = (eventInfo: any) => {
   const colorClass = `fc-bg-${eventInfo.event.extendedProps.calendar.toLowerCase()}`;
   
-  const normalizeRenderDate = (date: any): string => {
+  const normalizeRenderDate = (date: Date | string | number): string => {
     if (!date) return "";
     
     const tempDate = new Date(date);
