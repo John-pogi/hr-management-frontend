@@ -11,7 +11,7 @@ import { apiGet } from "../../api/ApiHelper";
 
 export default function Blank() {
   
-  const [modal, setModal] = useState(true);
+  const [modal, setModal] = useState(false);
 
   const handleCloseModal = () => {
     setModal(false);
