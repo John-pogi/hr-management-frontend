@@ -5,29 +5,31 @@ import Pagination from "../pagination/Pagination";
 interface PageQuery {
   per_page: number;
   page: number;
-  company?: string;
-  department?: string;
+  company: string;
+  department: string;
+  search: string;
 }
 
 interface ComponentFilterProps {
   children: React.ReactNode;
   className?: string;
-  onSearchChange?: (value: string) => void;
-  onAddChange?: (value: string) => void;
   pageQuery: PageQuery;
   setPageQuery: React.Dispatch<React.SetStateAction<PageQuery>>;
   filterFields?: InputProps[];
   addFields?: InputProps[];
+  handleAddSubmit?: () => void;
+  handleFilterSubmit?: () => void;
 }
 
 const ComponentFilter: React.FC<ComponentFilterProps> = ({
   children,
   className = "",
-  onSearchChange,
   pageQuery,
   setPageQuery,
   filterFields = [],
   addFields = [],
+  handleAddSubmit = () => {},
+  handleFilterSubmit = () => {},
 }) => {
 
   const [modal, setModal] = useState({
@@ -41,6 +43,24 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
     },
     [setPageQuery]
   );
+
+  const [timeoutId, setTimeoutId] = useState<number | null>(null);
+
+  const onSearchChange = useCallback((value: string) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    const timeout = setTimeout(() => {
+      setPageQuery(prev => ({ 
+        ...prev, 
+        page: 1, 
+        search: value || '' 
+      }));
+    }, 1000);
+
+    setTimeoutId(timeout);
+  }, [timeoutId, setPageQuery]);
 
   const handlePrevPage = useCallback(() => {
     setPageQuery((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }));
@@ -93,7 +113,7 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
             name="search"
             placeholder="Find a company..."
             className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px]"
-            onChange={(e) => onSearchChange?.(e.target.value)}
+            onChange={(e) => onSearchChange(e.target.value)}
           />
         </div>
 
@@ -130,9 +150,9 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
             filter: false,
           }))}
           title="Filters"
-          submit={() => 'mother fucker'}
           desc="Narrow data results for faster management."
           fields={filterFields}
+          submit={handleFilterSubmit}
         />
       )}
 
@@ -144,9 +164,9 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
             add: false,
           }))}
           title="Create"
-          submit={() => 'mother fucker'}
           desc="Create a new entry."
           fields={addFields}
+          submit={handleAddSubmit}
         />
       )}
 

@@ -35,11 +35,14 @@ export default function Employees() {
   const [pageQuery, setPageQuery] = useState({
     per_page: 10,
     page: 1,
+    company: "",
+    department: "",
+    search: "",
   });
   
   const { data: response } = useQuery<ApiResponse>({
     queryKey: ["employees", pageQuery],
-    queryFn: () => apiGet(endpoints.employees, pageQuery),
+    queryFn: () => {console.log(pageQuery.search); return apiGet(endpoints.employees, pageQuery)},
     initialData: { data: [] },
   });
 
@@ -50,8 +53,6 @@ export default function Employees() {
     },
   });
   
-  const [company, setCompany] = useState("");
-  const [department, setDepartment] = useState("");
   const [employee, setEmployee] = useState({
     fullname: "",
     email: "",
@@ -72,8 +73,8 @@ export default function Employees() {
         { value: "Journey Tech Inc.", label: "Journey Tech Inc." },
         { value: "Etc.", label: "Etc." },
       ],
-      defaultValue: company,
-      onChange: (e: ChangeEvent<HTMLSelectElement>) => setCompany(e.target.value),
+      defaultValue: pageQuery.company,
+      onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, company: e.target.value})),
     },
     {
       kind: "select" as const,
@@ -88,8 +89,8 @@ export default function Employees() {
         { value: "CS", label: "CS" },
         { value: "HR", label: "HR" },
       ],
-      defaultValue: department,
-      onChange: (e: ChangeEvent<HTMLSelectElement>) => setDepartment(e.target.value),
+      defaultValue: pageQuery.department,
+      onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, department: e.target.value})),
     },
   ];
 
@@ -218,6 +219,20 @@ export default function Employees() {
     },
   ];
 
+  const handleAddSubmit = () => {
+    console.log(employee.fullname);
+    console.log(employee.email);
+    console.log(employee.position);
+    console.log(employee.contact);
+    console.log(employee.department);
+    console.log(employee.company);
+  }
+
+  const handleFilterSubmit = () => {
+    console.log(pageQuery.company);
+    console.log(pageQuery.department);
+  }
+
   return (
     <>
       <PageMeta
@@ -230,6 +245,8 @@ export default function Employees() {
           setPageQuery={setPageQuery} 
           filterFields={filterFields} 
           addFields={addFields}
+          handleAddSubmit={handleAddSubmit}
+          handleFilterSubmit={handleFilterSubmit}
         >
           <ReusableTable header={header} data={response.data || []} />
         </ComponentFilter>
