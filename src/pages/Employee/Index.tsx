@@ -225,7 +225,12 @@ export default function Employees() {
         description="This page handle employee CRUD functionalities."
       />
       <div className="space-y-6">
-        <ComponentFilter pageQuery={pageQuery} setPageQuery={setPageQuery} filterFields={filterFields} addFields={addFields}>
+        <ComponentFilter 
+          pageQuery={pageQuery} 
+          setPageQuery={setPageQuery} 
+          filterFields={filterFields} 
+          addFields={addFields}
+        >
           <ReusableTable header={header} data={response.data || []} />
         </ComponentFilter>
       </div>

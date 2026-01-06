@@ -42,7 +42,7 @@ export default function Companies() {
   const [company, setCompany] = useState({
     name: "",
     code: "",
-    department: [],
+    department: "",
   })
 
   const addFields = [
@@ -65,7 +65,7 @@ export default function Companies() {
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCompany((prev) => ({...prev, code: e.target.value})),
     },
     {
-      kind: "select" as const,
+      kind: "multi-select" as const,
       name: "department",
       label: "Department",
       placeholder: "Select department",
@@ -77,6 +77,7 @@ export default function Companies() {
         { value: "HR", label: "HR" },
       ],
       defaultValue: company.department,
+      onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setCompany((prev) => ({...prev, department: e.target.value})),
     },
   ];
 
