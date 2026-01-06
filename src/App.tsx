@@ -7,6 +7,8 @@ import AppLayout from "./layout/AppLayout";
 import Index from "./layout/Index";
 import Home from "./pages/Dashboard/Home";
 import Companies from './pages/Companies/Index'; 
+import DTR from './pages/DTR/Index'; 
+
 import Blank from "./pages/Blank";
 
 export const router = createBrowserRouter([
@@ -40,6 +42,10 @@ export const router = createBrowserRouter([
       {
         path: "companies",
         element: <Companies />,
+      },
+       {
+        path: "dtr",
+        element: <DTR />,
       },
       {
         path: "blank",
