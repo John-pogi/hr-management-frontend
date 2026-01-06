@@ -34,11 +34,6 @@ const navItems: NavItem[] = [
     icon: <CompanyIcon />,
     path: "companies",
   },
-  {
-    name: "Department",
-    icon: <DepartmentIcon />,
-    path: "blank",
-  },
 ];
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();

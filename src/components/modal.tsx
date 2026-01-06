@@ -66,6 +66,7 @@ export interface MultiSelectInputProps extends BaseInputProps {
   kind: 'multi-select';
   options?: Option[];
   defaultSelected?: string[];
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 export interface DropzoneInputProps extends BaseInputProps {
@@ -280,12 +281,21 @@ export default function Modal({ style = "pop-up", close, submit, title, desc, fi
                     <div>
                       <MultiSelect
                         label={field.label ?? "Multiple Select Options"}
+                        placeholder={field.placeholder ?? "Select Option"}
                         options={(field.options ?? []).map(opt => ({ 
                           text: opt.label,
                           value: opt.value 
                         }))}
                         defaultSelected={field.defaultSelected ?? []}
                         disabled={!!field.disabled}
+                        onChange={(value) => {
+                          const syntheticEvent = {
+                            target: { 
+                              value: value.join(',')
+                            }
+                          } as unknown as React.ChangeEvent<HTMLSelectElement>;
+                          (field.onChange as (e: React.ChangeEvent<HTMLSelectElement>) => void)(syntheticEvent);
+                        }}
                       />
                     </div>
                   ) : isFileInput(field) ? (
