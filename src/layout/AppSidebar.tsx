@@ -3,8 +3,11 @@ import { Link, useLocation } from "react-router-dom";
 
 import {
   ChevronDownIcon,
-  GridIcon,
+  UserCircleIcon,
   HorizontaLDots,
+  CompanyIcon,
+  DepartmentIcon,
+  LeaveRequestIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -17,13 +20,24 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    name: "Manage",
-    icon: <GridIcon />,
-    subItems: [
-      { name: "Employees", path: "employees", pro: false }, 
-      { name: "Leave Requst", path: "leave-request", pro: false },
-      { name: "Companies", path: "companies", pro: false },
-    ],
+    name: "Employees",
+    icon: <UserCircleIcon />,
+    path: "employees",
+  },
+  {
+    name: "Leave Requst",
+    icon: <LeaveRequestIcon />,
+    path: "leave-request",
+  },
+  {
+    name: "Companies",
+    icon: <CompanyIcon />,
+    path: "companies",
+  },
+  {
+    name: "Department",
+    icon: <DepartmentIcon />,
+    path: "blank",
   },
 ];
 const AppSidebar: React.FC = () => {
