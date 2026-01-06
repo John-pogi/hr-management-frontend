@@ -18,7 +18,7 @@ export default function NotFound() {
 
           <img src="/images/error/404.svg" alt="404" className="dark:hidden" />
           <img
-            src="s/error/404-dark.svg"
+            src="/images/error/404-dark.svg"
             alt="404"
             className="hidden dark:block"
           />
@@ -35,7 +35,7 @@ export default function NotFound() {
           </Link>
         </div>
         <p className="absolute text-sm text-center text-gray-500 -translate-x-1/2 bottom-6 left-1/2 dark:text-gray-400">
-          &copy; {new Date().getFullYear()} - TailAdmin
+          &copy; {new Date().getFullYear()} - JOHN / KEN / MV
         </p>
       </div>
     </>
