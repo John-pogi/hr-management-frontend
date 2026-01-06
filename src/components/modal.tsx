@@ -87,7 +87,7 @@ interface ModalProps {
   desc?: string;
   style?: string;
   close: () => void;
-  submit: () => void;
+  submit: (data: any) => void;
 }
 
 const isBasicInput = (field: InputProps): field is BasicInputProps => 

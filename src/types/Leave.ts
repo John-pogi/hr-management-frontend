@@ -1,4 +1,3 @@
-// Might change
 export interface LeaveRecord {
   id: string;
   employeeName: string;

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const getClient = (base?: string | null)=>{
     
-    let headers = {
+    const headers = {
         'accept': 'application/json'
     };
 
