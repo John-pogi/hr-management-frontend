@@ -1,21 +1,28 @@
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import PageMeta from "../components/common/PageMeta";
-import { StatCard } from "../components/common/StatCard";
-import { fetchData } from "../utils/fetchData";
-import { useEffect, useState } from "react";
+// import { fetchData } from "../utils/fetchData";
+import { useState } from "react";
 import Modal, { InputProps } from "../components/modal";
+import LeaveStatCardComponent from "../components/LeaveStatCardComponent";
+import { fetchData } from "../utils/fetchData";
 
 export default function Blank() {
   const [modal, setModal] = useState(true);
-  const [fetchedData, setFetchedData] = useState<number | null>(null);
+
+  // const url = "/api/leaves/submit";
+
+  // Unfinished function
+  const handleSubmit = () => {
+    return;
+  };
 
   const handleCloseModal = () => {
     setModal(false);
-  }
+  };
 
   const fields: InputProps[] = [
     {
-      kind: 'basic',
+      kind: "basic",
       type: "text",
       name: "test",
       label: "Text Input",
@@ -23,7 +30,7 @@ export default function Blank() {
       defaultValue: "TEST",
     },
     {
-      kind: 'basic',
+      kind: "basic",
       type: "password",
       name: "password",
       label: "Password",
@@ -32,7 +39,7 @@ export default function Blank() {
       defaultValue: "TEST",
     },
     {
-      kind: 'basic',
+      kind: "basic",
       type: "email",
       name: "email",
       label: "Email",
@@ -41,7 +48,7 @@ export default function Blank() {
       defaultValue: "TEST",
     },
     {
-      kind: 'basic',
+      kind: "basic",
       type: "number",
       name: "number",
       label: "Number",
@@ -53,7 +60,7 @@ export default function Blank() {
       defaultValue: "TEST",
     },
     {
-      kind: 'select',
+      kind: "select",
       name: "select",
       label: "Category",
       placeholder: "Select an option",
@@ -65,7 +72,7 @@ export default function Blank() {
       defaultValue: "TEST",
     },
     {
-      kind: 'textarea',
+      kind: "textarea",
       name: "textarea1",
       label: "Description (Disabled)",
       placeholder: "Enter description",
@@ -74,7 +81,7 @@ export default function Blank() {
       defaultValue: "TEST",
     },
     {
-      kind: 'textarea',
+      kind: "textarea",
       name: "textarea2",
       label: "Description",
       placeholder: "Enter description",
@@ -83,47 +90,30 @@ export default function Blank() {
       defaultValue: "TEST",
     },
     {
-      kind: 'file',
+      kind: "file",
       label: "File Upload",
     },
     {
-      kind: 'checkbox',
+      kind: "checkbox",
       label: "Enable notifications",
       checked: false,
     },
     {
-      kind: 'dropzone',
+      kind: "dropzone",
       label: "Image Upload",
       name: "images",
     },
     {
-      kind: 'multi-select',
+      kind: "multi-select",
       label: "Skills",
       options: [
         { value: "react", label: "React" },
         { value: "typescript", label: "TypeScript" },
-        { value: "tailwind", label: "Tailwind CSS" }
+        { value: "tailwind", label: "Tailwind CSS" },
       ],
       defaultSelected: [],
-    }
+    },
   ];
-
-
-  useEffect(() => {
-    async function loadLeaves() {
-      try {
-        await fetchData("/api/leaves");
-        setFetchedData(null);
-      } catch (error) {
-        if (error instanceof Error) {
-          //
-        }
-      } finally {
-        //
-      }
-    }
-    loadLeaves();
-  }, []);
 
   return (
     <div>
@@ -132,27 +122,26 @@ export default function Blank() {
         description="This is Leaves Dashboard for TailAdmin"
       />
       <PageBreadcrumb pageTitle="Leaves" />
-      <div className="min-h-7 rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12 flex space-x-4 text-center  ">
-        <StatCard
-          label="Unspent Leaves:"
-          count={fetchedData ?? 0}
-          color="bg-green-100 text-green-700"
-          className="text-center"
-        ></StatCard>
-        <StatCard
-          label="Spent Leaves:"
-          count={fetchedData ?? 0}
-          color="bg-green-100 text-green-700"
-        ></StatCard>
-        <StatCard
-          label="Remaining Leaves:"
-          count={fetchedData ?? 0}
-          color="bg-green-100 text-green-700"
-        ></StatCard>
-      </div>
+      <LeaveStatCardComponent />
 
-      {!modal && <button onClick={() => setModal(true)} className="rounded-full px-5 py-3 bg-[rgba(0,0,255,0.5)] hover:opacity-90">Open Modal</button>}
-      {modal && <Modal style="pop-up" close={handleCloseModal} title="haha" desc="hahaha" fields={fields} />}
+      {!modal && (
+        <button
+          onClick={() => setModal(true)}
+          className="rounded-full px-5 py-3 bg-[rgba(0,0,255,0.5)] hover:opacity-90"
+        >
+          Open Modal
+        </button>
+      )}
+      {modal && (
+        <Modal
+          style="pop-up"
+          close={handleCloseModal}
+          title="haha"
+          desc="hahaha"
+          fields={fields}
+          submit={handleSubmit}
+        />
+      )}
     </div>
   );
 }
