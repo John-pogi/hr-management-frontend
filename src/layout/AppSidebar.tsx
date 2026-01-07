@@ -35,6 +35,11 @@ const navItems: NavItem[] = [
     path: "companies",
   },
   {
+    name: "DTR",
+    icon: <CompanyIcon />,
+    path: "dtr",
+  },
+  {
     name: "Department",
     icon: <DepartmentIcon />,
     path: "blank",

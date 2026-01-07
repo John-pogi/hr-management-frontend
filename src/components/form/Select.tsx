@@ -11,6 +11,7 @@ interface SelectProps {
   className?: string;
   defaultValue?: string;
   id?: string;
+  allSelection?: Option
   onChange?: (value: string) => void;
 }
 
@@ -20,6 +21,7 @@ const Select: React.FC<SelectProps> = ({
   placeholder = "Select an option",
   className = "",
   defaultValue = "",
+  allSelection,
   onChange,
 }) => {
   const [selectedValue, setSelectedValue] = useState<string>(defaultValue);
@@ -49,6 +51,16 @@ const Select: React.FC<SelectProps> = ({
       >
         {placeholder}
       </option>
+
+      {allSelection && (
+         <option
+          key={allSelection.value}
+          value={allSelection.value}
+          className="text-gray-700 dark:bg-gray-900 dark:text-gray-400"
+        >
+          {allSelection.label}
+        </option>
+      )}
       {/* Map over options */}
       {options.map((option) => (
         <option
