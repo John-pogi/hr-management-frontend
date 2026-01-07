@@ -55,8 +55,8 @@ export default function Pagination({ onClickNext, onClickPrev, onChange, total ,
             value={selectedOption}
             onChange={handleOnChange} 
             className="border-none outline-none text-blue-500 bg-transparent">
-                {options.map(option => (
-                    <option value={option.value}>{option.label}</option>
+                {options.map((option, index) => (
+                    <option key={index} value={option.value}>{option.label}</option>
                 ))}
         </select>
 
