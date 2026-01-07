@@ -2,12 +2,16 @@ import { useState, useCallback } from "react";
 import Modal, { InputProps } from "../modal";
 import Pagination from "../pagination/Pagination";
 
-interface PageQuery {
-  per_page: number;
-  page: number;
-  company: string;
-  department: string;
+export interface PageQuery {
+  per_page: string;
+  page: string;
+  company: string | null;
+  department: string | null;
   search: string;
+  from: string | null;
+  to: string | null;
+  company_id: string | null;
+  status: string | null;
 }
 
 interface ComponentFilterProps {
@@ -37,12 +41,13 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
     add: false,
   });
 
-  const handlePageChange = useCallback(
-    (perPage: number) => {
-      setPageQuery((prev) => ({ ...prev, page: 1, per_page: perPage }));
-    },
-    [setPageQuery]
-  );
+  const handlePageChange = useCallback((perPage: number) => {
+    setPageQuery((prev) => ({ 
+      ...prev, 
+      page: "1", 
+      per_page: perPage.toString()
+    }));
+  }, [setPageQuery]);
 
   const [timeoutId, setTimeoutId] = useState<number | null>(null);
 
@@ -51,25 +56,31 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
       clearTimeout(timeoutId);
     }
 
-    const timeout = setTimeout(() => {
+    const newTimeout = setTimeout(() => {
       setPageQuery(prev => ({ 
         ...prev, 
-        page: 1, 
+        page: "1",
         search: value || '' 
       }));
     }, 1000);
 
-    setTimeoutId(timeout);
+    setTimeoutId(newTimeout);
   }, [timeoutId, setPageQuery]);
 
+
   const handlePrevPage = useCallback(() => {
-    setPageQuery((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }));
+    setPageQuery((prev) => ({ 
+      ...prev, 
+      page: Math.max(1, parseInt(prev.page || "1") - 1).toString()
+    }));
   }, [setPageQuery]);
 
   const handleNextPage = useCallback(() => {
-    setPageQuery((prev) => ({ ...prev, page: prev.page + 1 }));
+    setPageQuery((prev) => ({ 
+      ...prev, 
+      page: (parseInt(prev.page || "1") + 1).toString()  // ✅ String conversion
+    }));
   }, [setPageQuery]);
-
   return (
     <div
       className={`rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] ${className}`}
@@ -167,7 +178,7 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
         
         <Pagination
           onChange={handlePageChange}
-          isPrevDisabled={pageQuery.page <= 1}
+          isPrevDisabled={Number(pageQuery.page) <= 1}
           isNextDisabled={false}
           onClickPrev={handlePrevPage}
           onClickNext={handleNextPage}

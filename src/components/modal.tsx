@@ -9,7 +9,9 @@ import MultiSelect from "./form/MultiSelect";
 import Checkbox from "./form/input/Checkbox";
 import { useDropzone } from "react-dropzone";
 import Button from "./ui/button/Button";
-
+import { browser } from 'convert-csv-to-json';
+import { apiPost } from "../api/ApiHelper";
+import endpoints from "../enpoint";
 interface Option {
   value: string;
   label: string;
@@ -114,13 +116,48 @@ const isDropzoneInput = (field: InputProps): field is DropzoneInputProps =>
 
 const DropzoneField = ({ field }: { field: DropzoneInputProps}) => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    console.log(acceptedFiles);
+    if (acceptedFiles.length > 1) {
+    alert('Please select only 1 CSV/Excel file.');
+    return;
+  }
+
+  const file = acceptedFiles[0];
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const csvString = event.target?.result as string;
+      const rawData = browser.fieldDelimiter(',').csvStringToJson(csvString);
+      console.log(rawData);
+      
+      const validData = rawData.filter(row => row && Object.keys(row).length > 0);
+      const dtr = validData.map((row: any) => {
+        
+        return {
+          employee_number: row?.employee_number ||'',
+          type: row?.type || '',
+          date: row?.date || '',
+          time: row?.time || ''
+        };
+      });
+
+      const payload = { dtr };
+      console.log('DTR Payload:', payload);
+      apiPost(endpoints.dtr, payload);
+    };
+    reader.readAsText(file);
+
+  } else {
+    alert('No valid file selected.');
+  }
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.webp', '.svg']
+      'text/csv': ['.csv'],
+      'application/vnd.ms-excel': ['.xls'], 
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
     }
   });
 

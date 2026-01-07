@@ -1,79 +1,51 @@
+import ComponentFilter, { PageQuery } from "../../components/common/ComponentFilter";
 import PageMeta from "../../components/common/PageMeta";
-import { useState } from "react";
-import Modal, { InputProps } from "../../components/modal";
-import CustomTable from "../../components/tables/CustomTable";
-import { useQuery } from "@tanstack/react-query";
+import CustomTable, { TableHeader } from "../../components/CustomTable";
+import type { ChangeEvent } from "react";
+import { apiGet, apiFetch } from "../../api/ApiHelper";
 import endpoints from "../../enpoint";
-import Pagination from "../../components/pagination/Pagination";
-import { apiFetch, apiGet, apiPost } from "../../api/ApiHelper";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { parse, format, minutesToHours, parseISO} from 'date-fns';
-import Input from "../../components/form/input/InputField";
-import Select from "../../components/form/Select";
-import { browser } from 'convert-csv-to-json';
 
-export default function Blank() {
-  
-  const [modal, setModal] = useState(false);
+interface EOD {
+  id: number;
+  employee_id: number;
+  date: string;
+  time_in: string | null;
+  time_out: string | null;
+  total_minutes: number;
+  shift_start: string;
+  shift_end: string;
+  employee: {
+    id: number;
+    name: string;
+    employee_number: string;
+    company_name: string;
+  };
+}
 
-  const handleCloseModal = () => {
-    setModal(false);
-  }
+interface ApiResponse {
+  data: EOD[];
+}
 
-  const fields: InputProps[] = [
-    {
-      kind: 'basic',
-      type: "text",
-      name: "test",
-      label: "Name",
-      placeholder: "Enter your text",
-      defaultValue: null,
-    },
-     {
-      kind: 'basic',
-      type: "text",
-      name: "code",
-      label: "Code",
-      placeholder: "Enter your text",
-      defaultValue: null,
-    },
-  ];
-
-  const [editForm, setEditForm] = useState({
-    isOpen: false,
-    fields: [
-      {
-        kind: 'basic',
-        type: "text",
-        name: "name",
-        label: "Name",
-        placeholder: "Enter your text",
-        defaultValue: null,
-      },
-      {
-        kind: 'basic',
-        type: "text",
-        name: "code",
-        label: "Code",
-        placeholder: "Enter your text",
-        defaultValue: null,
-      },
-    ]
-  });
-
-  const [pageQuery, setPageQuery] = useState({
-    per_page: 10,
-    page:1,
+export default function Employees() {
+  const [pageQuery, setPageQuery] = useState<PageQuery>({
+    per_page: "10",
+    page: "1",
+    company_id: null,
+    company: null,
+    search: "",
+    status: null,
     from: null,
     to: null,
-    company_id: null,
-    search: '',
-    statue: ''
+    department: null,
   });
-
-  const { data: eod } = useQuery({
+  
+  const { data: response } = useQuery<ApiResponse>({
     queryKey: ["eod", pageQuery],
-    queryFn: ()=> apiGet(endpoints.eod,pageQuery),
-    initialData: [],
+    queryFn: () => {console.log(pageQuery.search); return apiGet(endpoints.eod, pageQuery)},
+    initialData: { data: [] },
   });
 
   const { data: companies } = useQuery({
@@ -82,217 +54,176 @@ export default function Blank() {
     initialData: [],
   });
 
-  const eodTableHeader = [
+  const filterFields = [
+    {
+      kind: "select" as const,
+      name: "status",
+      label: "Status",
+      placeholder: "Select status",
+      options: [
+        { value: "", label: "All Status" },
+        { value: "absent", label: "Absent" },
+        { value: "partial", label: "Partial" },
+        { value: "present", label: "Present" },
+      ],
+      defaultValue: pageQuery.status || undefined,
+      onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, status: e.target.value})),
+    },
+    {
+      kind: "select" as const,
+      name: "companies",
+      label: "Companies",
+      placeholder: "Select companies",
+      options: [
+      { value: "", label: "All Companies" },
+      ...(Array.isArray(companies) ? companies.map((company: any) => ({ 
+        label: company.name, 
+        value: company.id.toString() 
+      })) : [])
+    ],
+      defaultValue: pageQuery.company_id || undefined,
+      onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, company_id: e.target.value})),
+    },
+    {
+      kind: 'basic' as const,
+      type: "date" as const,
+      name: "from",
+      label: "From",
+      defaultValue: pageQuery.from || undefined,
+      onChange: (e: ChangeEvent<HTMLInputElement>) => setPageQuery((prev) => ({...prev, from: e.target.value})),
+    },
+    {
+      kind: 'basic' as const,
+      type: "date" as const,
+      name: "to",
+      label: "To",
+      defaultValue: pageQuery.to || undefined,
+      min: pageQuery.from || undefined,
+      onChange: (e: ChangeEvent<HTMLInputElement>) => setPageQuery((prev) => ({...prev, to: e.target.value})),
+    },
+  ];
+
+  const addFields = [
+    {
+      kind: 'dropzone' as const,
+      name: "file",
+      label: "File",
+    },
+  ];
+
+  const header = [
     {
       text: '#',
       key: 'id',
-      actionFormater(value, index) {
-          return index + 1;
-      },
+      actionFormatter: (_row: any, index: number) => index + 1,
     },
     {
       text: 'Employee',
-      key: '',
-      actionFormater(value: string, index) {
-        return <div className="flex flex-col">
-            <span className="font-semibold">{value?.employee?.name}</span>
-            <span className="text-sm">{value?.employee?.company_name}</span>
+      key: 'employee_name',
+      actionFormatter: (row: any) => (
+        <div className="flex flex-col">
+          <span className="font-semibold">{row.employee?.name || '--'}</span>
+          <span className="text-sm text-gray-500">{row.employee?.company_name || '--'}</span>
         </div>
-      },
-    },
-     {
-      text: 'Employee Number',
-      key: 'employee.employee_number'
-    },
-      {
-      text: 'Date',
-      key: 'date'
+      ),
     },
     {
-      text: 'Time IN',
+      text: 'Employee Number',
+      key: 'employee_number',
+      actionFormatter: (row: any) => row.employee?.employee_number || '--',
+    },
+    {
+      text: 'Date',
+      key: 'date',
+    },
+    {
+      text: 'Time In',
       key: 'time_in',
-      valueFormater(value: string, index) {
-        
-        if(!value){
-          return '--'
-        }
-
-        const timeDate = parse(value, "HH:mm:ss", new Date());
-        return format(timeDate, "hh:mm a");
+      valueFormatter: (value: string) => {
+        if (!value) return '--';
+        const timeDate = parse(value, 'HH:mm:ss', new Date());
+        return format(timeDate, 'hh:mm a');
       },
     },
-     {
-      text: 'Time OUT',
+    {
+      text: 'Time Out',
       key: 'time_out',
-      valueFormater(value: string, index) {
-
-        if(!value){
-          return '--'
-        }
-
-        const timeDate = parse(value, "HH:mm:ss", new Date());
-        return format(timeDate, "hh:mm a");
+      valueFormatter: (value: string) => {
+        if (!value) return '--';
+        const timeDate = parse(value, 'HH:mm:ss', new Date());
+        return format(timeDate, 'hh:mm a');
       },
     },
-     {
+    {
       text: 'Work Duration',
       key: 'total_minutes',
-      valueFormater(minutes: number, index) {
-        
-        const hours = minutesToHours(minutes);
-        const minutesLeft = minutes - hours * 60;
-
-        const stringifiedHours = String(hours).length === 1 ? `0${hours}` : `${hours}`;
-        const stringifiedMinutes = String(minutesLeft).length === 1 ? `0${minutesLeft}` : `${minutesLeft}`;
-        return `${stringifiedHours}:${stringifiedMinutes}`;
-
-      }
+      valueFormatter: (value: number) => {
+        if (!value) return '--';
+        const hours = minutesToHours(value);
+        const minutesLeft = value - (hours * 60);
+        return `${String(hours).padStart(2, '0')}:${String(minutesLeft).padStart(2, '0')}`;
+      },
+    },
+    {
+      text: 'Late Minutes',
+      key: 'late_minutes',
+      valueFormatter: (value: number) => value || '--',
+    },
+    {
+      text: 'Overtime Minutes',
+      key: 'overtime_minutes',
+      valueFormatter: (value: number) => value || '--',
     },
     {
       text: 'Shift',
-      key: 'employee.company_name',
-      actionFormater(value, index) {
-
-        const startShift = parseISO(value?.shift_start);
-        const endShift = parseISO(value?.shift_end);
-
-        let shift =  `${format(startShift, "hh:mm a")} - ${format(endShift, "hh:mm a")}`
-
-        return shift;
+      key: 'shift',
+      actionFormatter: (row: any) => {
+        if (!row.shift_start || !row.shift_end) return '--';
+        try {
+          const startShift = parseISO(row.shift_start);
+          const endShift = parseISO(row.shift_end);
+          return `${format(startShift, 'hh:mm a')} - ${format(endShift, 'hh:mm a')}`;
+        } catch {
+          return '--';
+        }
       },
     },
     {
       text: 'Note',
-      key: '',
-      actionFormater(value, index) {
-          return value?.on_leave ? 'on leave' : '--';
-      },
+      key: 'note',
+      actionFormatter: (row: any) => row.on_leave ? 'On Leave' : '--',
     },
   ];
 
-  const handleDTRUpload = (csvJson) => {
-    apiPost(endpoints.dtr, {
-        
-    });
+  const handleAddSubmit = () => {
+    console.log('test add submit');
+  }
+
+  const handleFilterSubmit = () => {
+    console.log(pageQuery.company_id);
+    console.log(pageQuery.status);
+    console.log(pageQuery.from);
+    console.log(pageQuery.to);
   }
 
   return (
-    <div>
-
-
+    <>
       <PageMeta
-        title="Leaves Dashboard | TailAdmin"
-        description="This is Leaves Dashboard for TailAdmin"
+        title="Manage Employees"
+        description="This page handle employee CRUD functionalities."
       />
-
-      <div className="flex items-end gap-1 mb-2">
-        {/* <Button
-        onClick={()=> setModal(true)}
+      <div className="space-y-6">
+        <ComponentFilter 
+          pageQuery={pageQuery} 
+          setPageQuery={setPageQuery} 
+          filterFields={filterFields} 
+          addFields={addFields}
+          handleAddSubmit={handleAddSubmit}
+          handleFilterSubmit={handleFilterSubmit}
         >
-          Add Company
-
-          </Button> */}
-
-<div>
-<Select 
-
-onChange={(value) => setPageQuery(prev => ({...prev, status: value}))}
-options={[
-  {
-    label: 'ALl',
-    value: ''
-  },
-   {
-    label: 'absent',
-    value: 'absent'
-  },
-   {
-    label: 'Partial',
-    value: 'partial'
-  },
-   {
-    label: 'Present',
-    value: 'present'
-  }
-]}/>
-  
-</div>
-            <div>
-            <label className="text-sm">File</label>
-            <Input 
-              type='file' 
-              onChange={(e) => {
-
-                const fileInput = e.target;
-
-                 const file = fileInput?.files?.[0];
-
-                  if (file) {
-                      const reader = new FileReader();
-                      reader.onload = function(event) {
-                          const csvString = event.target.result;
-                          console.log('what the fuck: ', browser.fieldDelimiter(',').csvStringToJson(csvString) )
-                      };
-                      reader.readAsText(file);
-                  } else {
-                      alert('Please select a CSV file.');
-                  }
-              } }
-              />
-          </div>
-
-          <div>
-            <label className="text-sm">Search</label>
-            <Input 
-              type='text' 
-              onChange={(e) =>  setPageQuery((prev) => ({...prev, search: e.target.value})) }
-              />
-          </div>
-
-
-          <Select 
-            allSelection={{
-              label: 'All',
-              value: 'all'
-            }}
-            onChange={(companyID) =>  
-            setPageQuery(prev => ({...prev, company_id: companyID == 'all' ? null : companyID}))}  
-            options={companies.map(company => ({label: company.name, value: company.id}))}
-          />
-
-          <div>
-            <label className="text-sm">From</label>
-            <Input value={pageQuery.from} onChange={(e) => setPageQuery((prev) => ({...prev, from: e.target.value}))} type="date" />
-          </div>
-
-          <div>
-            <label className="text-sm">To</label>
-            <Input value={pageQuery.to} onChange={(e) => setPageQuery((prev) => ({...prev, to: e.target.value}))} type="date" />
-          </div>
-
-
-        <Pagination 
-          className='ms-auto'
-          onChange={(perPage)=> setPageQuery(prev => ({...prev, page: 1, per_page: perPage}))}
-          isPrevDisabled={pageQuery.page <= 1}
-          isNextDisabled={pageQuery.page >= eod?.last_page}
-          onClickPrev={(e)=> setPageQuery(prev => ({...prev, page: prev.page <= 1 ? 1 : prev.page -1 }))  }
-          onClickNext={(e)=> setPageQuery(prev => ({...prev, page:  prev.page < eod?.last_page ? prev.page + 1: prev.page }))  }
-          page={pageQuery.page}
-          perPage={pageQuery.per_page}
-          total={companies?.total}
-        />
-      </div>     
-
-      <CustomTable 
-        header={eodTableHeader}
-        data={eod?.data ?? []}
-      />
-
-      {modal && <Modal style="pop-up" close={handleCloseModal}  desc="add new company to the list" title="Company" fields={fields} />}
-    
-      {editForm.isOpen && <Modal  style="pop-up" close={()=> setEditForm(prev => ({...prev, isOpen: false}))}  desc="update company details" title="Company" fields={editForm.fields} />}
-    
-    </div>
+          <CustomTable header={header as TableHeader<EOD>[]} data={response.data || []} />
+        </ComponentFilter>
+      </div>
+    </>
   );
 }
