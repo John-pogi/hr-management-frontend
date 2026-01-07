@@ -6,8 +6,8 @@ import {
   UserCircleIcon,
   HorizontaLDots,
   CompanyIcon,
-  DepartmentIcon,
   LeaveRequestIcon,
+  CalendarIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -40,9 +40,9 @@ const navItems: NavItem[] = [
     path: "dtr",
   },
   {
-    name: "Department",
-    icon: <DepartmentIcon />,
-    path: "blank",
+    name: "EOD",
+    icon: <CalendarIcon />,
+    path: "eod",
   },
 ];
 const AppSidebar: React.FC = () => {
