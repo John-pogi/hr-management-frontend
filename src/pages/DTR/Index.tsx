@@ -66,7 +66,8 @@ export default function Blank() {
     from: null,
     to: null,
     company_id: null,
-    search: ''
+    search: '',
+    statue: ''
   });
 
   const { data: eod } = useQuery({
@@ -177,6 +178,8 @@ export default function Blank() {
 
   return (
     <div>
+
+
       <PageMeta
         title="Leaves Dashboard | TailAdmin"
         description="This is Leaves Dashboard for TailAdmin"
@@ -190,7 +193,30 @@ export default function Blank() {
 
           </Button> */}
 
+<div>
+<Select 
 
+onChange={(value) => setPageQuery(prev => ({...prev, status: value}))}
+options={[
+  {
+    label: 'ALl',
+    value: ''
+  },
+   {
+    label: 'absent',
+    value: 'absent'
+  },
+   {
+    label: 'Partial',
+    value: 'partial'
+  },
+   {
+    label: 'Present',
+    value: 'present'
+  }
+]}/>
+  
+</div>
             <div>
             <label className="text-sm">File</label>
             <Input 
