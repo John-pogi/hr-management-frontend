@@ -3,27 +3,28 @@ import PageMeta from "../../components/common/PageMeta";
 import { useState } from "react";
 import Modal, { InputProps } from "../../components/modal";
 import CustomTable from "../../components/tables/CustomTable";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import endpoints from "../../enpoint";
 import Button from "../../components/ui/button/Button";
 import Pagination from "../../components/pagination/Pagination";
 import { apiGet, apiPost, apiPut, apiDelete } from "../../api/ApiHelper";
 import { Company } from "../../types/Company";
+import { CompanyModal } from "../../types/CompanyModal";
 
 export default function Blank() {
-  
+  const queryClient = useQueryClient();
   const [modal, setModal] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  const fields: InputProps[] = selectedCompany ? [
+  const fields: InputProps[] = [
     {
       kind: 'basic',
       type: "text",
-      name: "test",
+      name: "name",
       label: "Name",
       placeholder: "Enter your text",
-      defaultValue: selectedCompany.name ?? "",
+      defaultValue: selectedCompany?.name ? selectedCompany.name : "",
     },
     {
       kind: 'basic',
@@ -31,9 +32,9 @@ export default function Blank() {
       name: "code",
       label: "Code",
       placeholder: "Enter your text",
-      defaultValue: selectedCompany.code ?? "",
+      defaultValue: selectedCompany?.code ? selectedCompany.code : "",
     },
-  ] : [];
+  ];
 
   // const [editForm, setEditForm] = useState({
   //   isOpen: false,
@@ -70,6 +71,7 @@ export default function Blank() {
 
   console.log("Companies:", companies);
   console.log("Selected Company:", selectedCompany);
+  
   const companyTableHeader = [
     {
       text: '#',
@@ -108,45 +110,54 @@ export default function Blank() {
   ];
 
   const ActionButton = ({ company }: { company: Company }) => {
+    const queryClient = useQueryClient();
 
     const handleEditClick = () => {
       setSelectedCompany(company);
       setModal(true);
       setIsEditing(true);
-  };
+    };
 
-    const handleOnClickDelete = () => {
-      //
-    }
+    const handleOnClickDelete = async () => {
+      const confirmed = window.confirm(`Are you sure you want to delte this ${company.name}?`);
+
+      if (confirmed) {
+        try {
+          await apiDelete(`${endpoints.companies}/${company.id}`);
+          queryClient.invalidateQueries({ queryKey: ["companies"] });
+        } catch (error) {
+          console.error("Deletion failed:", error);
+          alert("Could not delete the company. Please try again.");
+        }
+      }
+    };
 
     return <>
-    
       <div className="flex items-center gap-2">
         <Button onClick={handleEditClick} variant="outline" size="sm">Edit</Button>
-        <Button variant="outline" size="sm">Delete</Button>
+        <Button variant="outline" size="sm" onClick={handleOnClickDelete}>Delete</Button>
       </div>
     </>
-  }
+  };
 
   const handleCloseModal = () => {
-      setModal(false);
-      setIsEditing(false);
-      setSelectedCompany(null);
-    }
-
-  const handleSubmit = async (formData: any) => {
-      try {
-        if (isEditing && selectedCompany) {
-          await apiPut(`${endpoints.companies}/${selectedCompany.id}`, formData);
-        } else {
-          await apiPost(endpoints.companies, formData);
-        }
-
-
-      } catch (error) {
-        throw new Error();
+    setModal(false);
+    setIsEditing(false);
+    setSelectedCompany(null);
+  }
+  
+  const handleSubmit = async (formData: CompanyModal) => {
+    try {
+      if (isEditing && selectedCompany) {
+        await apiPut(`${endpoints.companies}/${selectedCompany.id}`, formData);
+      } else {
+        await apiPost(endpoints.companies, formData);
       }
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
+    } catch (error) {
+      console.error(error);
     }
+  }
     
   return (
     <div>
@@ -189,7 +200,7 @@ export default function Blank() {
           desc={isEditing ? "Update company details" : "Add a new company"} 
           title="Company" 
           fields={fields} 
-          submit={isEditing ? handleSubmit : } 
+          submit={handleSubmit} 
         />
       )}
 
