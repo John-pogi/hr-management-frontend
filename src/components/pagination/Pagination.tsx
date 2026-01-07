@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "../../icons";
 
-export default function Pagination({ onClickNext, onClickPrev, onChange, total , isNextDisabled, isPrevDisabled, perPage, page, className}){
+export default function Pagination({ onClickNext, onClickPrev, onChange, total , isNextDisabled, isPrevDisabled, perPage, page}){
 
     const options = [
         {
@@ -32,7 +32,7 @@ export default function Pagination({ onClickNext, onClickPrev, onChange, total ,
         if(onChange){
             onChange(selectedOption);
         }
-    },[selectedOption])
+    },[selectedOption, onChange])
 
     const paginationText = useMemo(()=>{
 
@@ -45,7 +45,7 @@ export default function Pagination({ onClickNext, onClickPrev, onChange, total ,
 
     return<>
 
-    <div className={`flex items-center gap-1 h-11 min-w-[275px] px-2 py-2.5 rounded-lg max-w-max border-[2px] border-gray-300 dark:border-[#3E3D4E] text-blue-500 hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.05)] ${className}`}>
+    <div className="flex items-center gap-1 h-11 min-w-[275px] px-2 py-2.5 rounded-lg max-w-max border-[2px] border-gray-300 dark:border-[#3E3D4E] text-blue-500 hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.05)]">
          
          <button disabled={isPrevDisabled} onClick={onClickPrev} className="pr-2 dark:border-gray-700 border-r">
             <ChevronLeftIcon className={`text-[24px] ${isPrevDisabled ? '!text-gray-300 dark:!text-gray-700' : ''}`}/>

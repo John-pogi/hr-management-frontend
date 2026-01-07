@@ -1,4 +1,4 @@
-import ComponentFilter from "../../components/common/ComponentFilter";
+import ComponentFilter, { PageQuery } from "../../components/common/ComponentFilter";
 import PageMeta from "../../components/common/PageMeta";
 import CustomTable, { TableHeader } from "../../components/CustomTable";
 import Button from "../../components/ui/button/Button";
@@ -21,12 +21,16 @@ interface ApiResponse {
 export default function Companies() {
   const queryClient = useQueryClient();
 
-  const [pageQuery, setPageQuery] = useState({
-    per_page: 10,
-    page: 1,
-    company: "",
-    department: "",
+  const [pageQuery, setPageQuery] = useState<PageQuery>({
+    per_page: "10",
+    page: "1",
+    company_id: null,
+    company: null,
     search: "",
+    status: null,
+    from: null,
+    to: null,
+    department: null,
   });
 
   const { data: companiesResponse } = useQuery<ApiResponse>({
@@ -56,7 +60,7 @@ export default function Companies() {
       label: "Name",
       placeholder: "Enter company's name",
       defaultValue: company.name,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCompany((prev) => ({...prev, fullname: e.target.value})),
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCompany((prev) => ({...prev, name: e.target.value})),
     },
     {
       kind: 'basic' as const,

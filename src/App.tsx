@@ -48,7 +48,7 @@ export const router = createBrowserRouter([
         element: <DTR />,
       },
       {
-        path: "blank",
+        path: "eod",
         element: <Blank />,
       },
     ],

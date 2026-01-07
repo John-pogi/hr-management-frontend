@@ -1,6 +1,6 @@
-import ComponentFilter from "../../components/common/ComponentFilter";
+import ComponentFilter, { PageQuery } from "../../components/common/ComponentFilter";
 import PageMeta from "../../components/common/PageMeta";
-import ReusableTable, { TableHeader } from "../../components/CustomTable";
+import CustomTable, { TableHeader } from "../../components/CustomTable";
 import type { ChangeEvent } from "react";
 import { apiGet } from "../../api/ApiHelper";
 import endpoints from "../../enpoint";
@@ -32,12 +32,16 @@ interface ApiResponse {
 export default function Employees() {
   const queryClient = useQueryClient();
 
-  const [pageQuery, setPageQuery] = useState({
-    per_page: 10,
-    page: 1,
-    company: "",
-    department: "",
+  const [pageQuery, setPageQuery] = useState<PageQuery>({
+    per_page: "10",
+    page: "1",
+    company_id: null,
+    company: null,
     search: "",
+    status: null,
+    from: null,
+    to: null,
+    department: null,
   });
   
   const { data: response } = useQuery<ApiResponse>({
@@ -73,7 +77,7 @@ export default function Employees() {
         { value: "Journey Tech Inc.", label: "Journey Tech Inc." },
         { value: "Etc.", label: "Etc." },
       ],
-      defaultValue: pageQuery.company,
+      defaultValue: pageQuery.company || undefined,
       onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, company: e.target.value})),
     },
     {
@@ -89,7 +93,7 @@ export default function Employees() {
         { value: "CS", label: "CS" },
         { value: "HR", label: "HR" },
       ],
-      defaultValue: pageQuery.department,
+      defaultValue: pageQuery.department || undefined,
       onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, department: e.target.value})),
     },
   ];
@@ -248,7 +252,7 @@ export default function Employees() {
           handleAddSubmit={handleAddSubmit}
           handleFilterSubmit={handleFilterSubmit}
         >
-          <ReusableTable header={header} data={response.data || []} />
+          <CustomTable header={header} data={response.data || []} />
         </ComponentFilter>
       </div>
     </>

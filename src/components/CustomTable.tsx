@@ -13,8 +13,8 @@ export interface TableHeader<T extends Record<string, any> = Record<string, any>
   isDisabled?: boolean;
   colSpan?: number;
   rowSpan?: number;
-  valueFormatter?: (value: T[keyof T], index: number) => ReactNode;
   actionFormatter?: (row: T, index: number) => ReactNode;
+  valueFormatter?: (value: any, index: number) => ReactNode;
 }
 
 export interface TableProps<T extends Record<string, any>> {
