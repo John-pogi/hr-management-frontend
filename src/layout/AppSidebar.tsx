@@ -34,6 +34,11 @@ const navItems: NavItem[] = [
     icon: <CompanyIcon />,
     path: "companies",
   },
+  {
+    name: "Department",
+    icon: <DepartmentIcon />,
+    path: "blank",
+  },
 ];
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
@@ -245,28 +250,12 @@ const AppSidebar: React.FC = () => {
         <Link to="/home/">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
-              <img
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-              <img
-                className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
+              <b className="dark:text-white">HR</b>
+              <small className="dark:text-white mx-2">|</small>
+              <b className="dark:text-white">Management</b>
             </>
           ) : (
-            <img
-              src="/images/logo/logo-icon.svg"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
+            <b className="dark:text-white">HR</b>
           )}
         </Link>
       </div>

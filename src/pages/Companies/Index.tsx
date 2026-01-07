@@ -24,11 +24,14 @@ export default function Companies() {
   const [pageQuery, setPageQuery] = useState({
     per_page: 10,
     page: 1,
+    company: "",
+    department: "",
+    search: "",
   });
 
   const { data: companiesResponse } = useQuery<ApiResponse>({
     queryKey: ["companies", pageQuery],
-    queryFn: () => apiGet(endpoints.companies, pageQuery),
+    queryFn: () => {console.log(pageQuery.search); return apiGet(endpoints.companies, pageQuery)},
     initialData: { data: [] },
   });
 
@@ -122,6 +125,17 @@ export default function Companies() {
     },
   ];
 
+  const handleAddSubmit = () => {
+    console.log(company.name);
+    console.log(company.code);
+    console.log(company.department);
+  }
+
+  const handleFilterSubmit = () => {
+    console.log(pageQuery.company);
+    console.log(pageQuery.department);
+  }
+
   return (
     <>
       <PageMeta
@@ -129,7 +143,13 @@ export default function Companies() {
         description="This page handles company CRUD functionalities."
       />
       <div className="space-y-6">
-        <ComponentFilter pageQuery={pageQuery} setPageQuery={setPageQuery} addFields={addFields}>
+        <ComponentFilter 
+          pageQuery={pageQuery} 
+          setPageQuery={setPageQuery} 
+          addFields={addFields}
+          handleAddSubmit={handleAddSubmit}
+          handleFilterSubmit={handleFilterSubmit}
+        >
           <CustomTable header={header} data={companiesResponse.data} />
         </ComponentFilter>
       </div>

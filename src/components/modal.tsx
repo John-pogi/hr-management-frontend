@@ -181,6 +181,7 @@ export default function Modal({ style = "pop-up", close, submit, title, desc, fi
 
   const handleSubmit = () => {
     submit();
+    close();
   }
 
   return (
