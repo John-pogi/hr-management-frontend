@@ -1,4 +1,4 @@
-import ComponentFilter, { PageQuery } from "../../components/common/ComponentFilter";
+import ComponentFilter from "../../components/common/ComponentFilter";
 import PageMeta from "../../components/common/PageMeta";
 import CustomTable, { TableHeader } from "../../components/CustomTable";
 import type { ChangeEvent } from "react";
@@ -7,27 +7,7 @@ import endpoints from "../../enpoint";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Button from "../../components/ui/button/Button";
-
-interface Employee {
-  id: number;
-  fullname: string;
-  email: string;
-  position: string;
-  contact: string;
-  company: Array<{ 
-    id: number,
-    name: string,
-    code: string,
-    logo: string | null,
-    created_at: string,
-    updated_at: string,
-  }>;
-  department: Array<{ name: string }>;
-}
-
-interface ApiResponse {
-  data: Employee[];
-}
+import { Employee, ApiResponse, PageQuery } from "../../types/Interface"
 
 export default function Employees() {
   const queryClient = useQueryClient();
