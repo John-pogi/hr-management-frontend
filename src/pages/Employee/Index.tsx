@@ -1,13 +1,13 @@
 import ComponentFilter from "../../components/common/ComponentFilter";
 import PageMeta from "../../components/common/PageMeta";
-import CustomTable, { TableHeader } from "../../components/CustomTable";
+import CustomTable from "../../components/CustomTable";
 import type { ChangeEvent } from "react";
 import { apiGet } from "../../api/ApiHelper";
 import endpoints from "../../enpoint";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Button from "../../components/ui/button/Button";
-import { Employee, ApiResponse, PageQuery } from "../../types/Interface"
+import { Employee, PageQuery, TableHeader } from "../../types/Interface"
 
 export default function Employees() {
   const queryClient = useQueryClient();
@@ -23,6 +23,10 @@ export default function Employees() {
     to: null,
     department: null,
   });
+
+  interface ApiResponse {
+    data: Employee[];
+  }
   
   const { data: response } = useQuery<ApiResponse>({
     queryKey: ["employees", pageQuery],
@@ -148,6 +152,7 @@ export default function Employees() {
     {
       text: "#",
       key: "id",
+      actionFormatter: (_, index) => index + 1,
     },
     {
       text: "Full Name",
@@ -168,30 +173,27 @@ export default function Employees() {
     {
       text: "Departments",
       key: "department",
-      valueFormatter: (value) => {
-        if (!value || (Array.isArray(value) && value.length === 0)) {
-          return "--";
-        }
-        return (value as Array<{ name: string }>).reduce(
-          (prev, current) => (prev ? `${prev}, ${current.name}` : current.name),
-          ""
+      valueFormatter: (_value, _index, row: Employee) => {
+        const departments = row?.department;
+        if (!departments || departments.length === 0) return "--";
+        return departments.reduce((prev, curr) => 
+          prev ? `${prev}, ${curr.name}` : curr.name, ""
         );
       },
     },
     {
       text: "Company",
       key: "company",
-      valueFormatter: (value) => {
-        if (!value || (Array.isArray(value) && value.length === 0)) {
-          return "--";
-        }
-        return Array.isArray(value) ? value[0]?.name || "--" : (value as any)?.name || "--";
+      valueFormatter: (_value, _index, row: Employee) => {
+        const company = row?.company;
+        if (!company || company.length === 0) return "--";
+        return company[0]?.name || "--";
       },
     },
     {
       text: "Action",
-      key: "employee.id" as keyof Employee,
-      actionFormatter: (employee) => (
+      key: "id",
+      actionFormatter: (employee: Employee) => (
         <ActionButton
           employee={employee}
           onView={() => console.log("View", employee.id)}
@@ -232,7 +234,10 @@ export default function Employees() {
           handleAddSubmit={handleAddSubmit}
           handleFilterSubmit={handleFilterSubmit}
         >
-          <CustomTable header={header} data={response.data || []} />
+          <CustomTable<Employee>
+            header={header} 
+            data={response.data || []} 
+          />
         </ComponentFilter>
       </div>
     </>

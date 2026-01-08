@@ -1,22 +1,14 @@
-import ComponentFilter, { PageQuery } from "../../components/common/ComponentFilter";
+import ComponentFilter from "../../components/common/ComponentFilter";
 import PageMeta from "../../components/common/PageMeta";
-import CustomTable, { TableHeader } from "../../components/CustomTable";
+import CustomTable from "../../components/CustomTable";
 import Button from "../../components/ui/button/Button";
 import { apiGet } from "../../api/ApiHelper";
 import endpoints from "../../enpoint";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { Company, PageQuery, TableHeader } from "../../types/Interface"
 
-interface Company {
-  id: number;
-  name: string;
-  code: string;
-  departments: Array<{ name: string }>;
-}
 
-interface ApiResponse {
-  data: Company[];
-}
 
 export default function Companies() {
   const queryClient = useQueryClient();
@@ -33,7 +25,11 @@ export default function Companies() {
     department: null,
   });
 
-  const { data: companiesResponse } = useQuery<ApiResponse>({
+  interface ApiResponse {
+    data: Company[];
+  }
+
+  const { data: response } = useQuery<ApiResponse>({
     queryKey: ["companies", pageQuery],
     queryFn: () => {console.log(pageQuery.search); return apiGet(endpoints.companies, pageQuery)},
     initialData: { data: [] },
@@ -104,21 +100,19 @@ export default function Companies() {
     },
     {
       text: "Departments",
-      key: "departments",
-      valueFormatter: (value) => {
-        if (!value || (Array.isArray(value) && value.length === 0)) {
-          return "--";
-        }
-        return (value as Array<{ name: string }>).reduce(
-          (prev, current) => (prev ? `${prev}, ${current.name}` : current.name),
-          ""
+      key: "department",
+      valueFormatter: (_value, _index, row: Company) => {
+        const departments = row?.department;
+        if (!departments || departments.length === 0) return "--";
+        return departments.reduce((prev, curr) => 
+          prev ? `${prev}, ${curr.name}` : curr.name, ""
         );
       },
     },
     {
       text: "Action",
-      key: "company.id" as keyof Company,
-      actionFormatter: (company) => (
+      key: "id",
+      actionFormatter: (company: Company) => (
         <ActionButton
           company={company}
           onEdit={() => console.log("Edit", company.id)}
@@ -154,7 +148,10 @@ export default function Companies() {
           handleAddSubmit={handleAddSubmit}
           handleFilterSubmit={handleFilterSubmit}
         >
-          <CustomTable header={header} data={companiesResponse.data} />
+          <CustomTable<Company>
+            header={header} 
+            data={response.data || []} 
+          />
         </ComponentFilter>
       </div>
     </>
