@@ -6,7 +6,6 @@ import { apiGet, apiFetch } from "../../api/ApiHelper";
 import endpoints from "../../enpoint";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { parse, format, minutesToHours, parseISO} from 'date-fns';
 
 interface EOD {
   id: number;
@@ -30,6 +29,7 @@ interface ApiResponse {
 }
 
 export default function Employees() {
+
   const [pageQuery, setPageQuery] = useState<PageQuery>({
     per_page: "10",
     page: "1",
@@ -42,15 +42,15 @@ export default function Employees() {
     department: null,
   });
   
-  const { data: response } = useQuery<ApiResponse>({
-    queryKey: ["eod", pageQuery],
-    queryFn: () => {console.log(pageQuery.search); return apiGet(endpoints.eod, pageQuery)},
-    initialData: { data: [] },
-  });
-
   const { data: companies } = useQuery({
     queryKey: ["companiesAPI"],
     queryFn: ()=> apiFetch(endpoints.companies),
+    initialData: [],
+  });
+  
+  const { data: leaves } = useQuery({
+    queryKey: ["leaves", pageQuery],
+    queryFn: ()=> apiGet(endpoints.leaveRequest, pageQuery),
     initialData: [],
   });
 
@@ -119,35 +119,44 @@ export default function Employees() {
         </div>
       ),
     },
-    {
-      text: 'Company',
-      key: 'company_name',
+     {
+      text: 'Available Credit',
+      key: 'employee.deparment_name',
       actionFormatter: (row: any) => (
-        <div className="flex flex-col">
-          <span className="font-semibold">{row.company?.name || '--'}</span>
+        <div className="grid grid-cols-[23px_1fr]">
+          <span className="font-semibold text-gray-500 border-r border-gray-500">SL</span>
+          <span className="font-bold ms-2">{row?.employee?.slCredit}</span>
+          <span className="font-semibold text-gray-500 border-r border-gray-500">VL</span>
+          <span className="font-bold ms-2">{row?.employee?.vlCredit}</span>
         </div>
       ),
     },
-    {
-      text: 'Department',
-      key: 'department_name',
-      actionFormatter: (row: any) => (
-        <div className="flex flex-col">
-          <span className="font-semibold">{row.department?.name || '--'}</span>
-        </div>
-      ),
+     {
+      text: 'Leave Credit',
+      key: 'valid_credit',
     },
     {
       text: 'Duration',
-      key: 'Duration',
+      key: 'duration',
+      actionFormatter: (row: any) => (
+        <div>
+          <span className="font-bold ms-2">{row?.start_date} <span className="text-gray-500">-</span> {row?.end_date}</span>
+        </div>
+      ),
     },
     {
       text: 'Request Type',
-      key: 'request_type',
+      key: 'leave_type.name',
+      actionFormatter: (row: any) => (
+        <div className="flex flex-col">
+          <span className="font-semibold">{row.leave_type?.name || '--'}</span>
+          <span className="text-sm text-gray-500">{row.notes || '--'}</span>
+        </div>
+      ),
     },
     {
-      text: 'Reason',
-      key: 'reason',
+      text: 'Attachment',
+      key: 'attachment',
     },
     {
       text: 'Status',
@@ -175,7 +184,7 @@ export default function Employees() {
           filterFields={filterFields} 
           handleFilterSubmit={handleFilterSubmit}
         >
-          <CustomTable header={header as TableHeader<EOD>[]} data={response.data || []} />
+          <CustomTable header={header as TableHeader<EOD>[]} data={leaves.data || []} />
         </ComponentFilter>
       </div>
     </>

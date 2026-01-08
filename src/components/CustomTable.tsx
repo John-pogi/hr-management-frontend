@@ -26,6 +26,34 @@ export default function CustomTable<T extends Record<string, any>>({
   header,
   data = [],
 }: TableProps<T>) {
+
+    const getContent = (content: any,key: string) => {
+        const keys = key.split('.');
+
+
+        if(keys.length <= 1){
+            return content[key] ?? '--';
+        }
+
+
+
+        let value = content;
+
+        for (let index = 0; index < keys.length; index++) {
+
+            const key = keys[index];
+
+            if(!Object.keys(value).includes(key)){
+                return '<invalid key>';
+            }	
+
+            value = value[key];
+
+        }
+
+        return value ?? '--';
+    }
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
@@ -60,9 +88,9 @@ export default function CustomTable<T extends Record<string, any>>({
                         {heading.actionFormatter ? (
                           heading.actionFormatter(dataValue, index)
                         ) : heading.valueFormatter ? (
-                          heading.valueFormatter(dataValue[heading.key], index)
+                          heading.valueFormatter(     dataValue[ heading.key], index)
                         ) : (
-                          dataValue[heading.key]
+                          getContent(dataValue, heading.key)
                         )}
                       </TableCell>
                     ))}

@@ -40,7 +40,7 @@ export default function CustomTable<T extends Record<string, any>>({header, data
 
         }
 
-        return value;
+        return value.name;
     }
 
     return <>
