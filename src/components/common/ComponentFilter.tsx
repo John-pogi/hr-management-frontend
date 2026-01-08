@@ -12,6 +12,9 @@ interface ComponentFilterProps {
   addFields?: InputProps[];
   handleAddSubmit?: () => void;
   handleFilterSubmit?: () => void;
+  handleEditSubmit?: () => void;
+  isAddOpen?: boolean;
+  setIsAddOpen?: (open: boolean) => void;
 }
 
 const ComponentFilter: React.FC<ComponentFilterProps> = ({

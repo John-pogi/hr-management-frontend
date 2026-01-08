@@ -50,7 +50,6 @@ export default function Companies() {
     setTimeout(() => {
       const createBtn = document.querySelector('button[type="button"]') as HTMLButtonElement;
       if (createBtn && createBtn.innerText.includes("Create")) {
-        
         createBtn.click();
       }
     }, 0);

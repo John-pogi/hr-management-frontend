@@ -29,10 +29,10 @@ export function apiFetch(endpoint: string, params?: object | null){
 export function apiDelete(endpoint: string) {
     const axiosClient = getClient();
     return axiosClient.delete(endpoint).then(res => res?.data);
+}
     
 export function apiPost(endpoint: string, body?: object | null){
-  
     const axiosClient = getClient();
 
-    return axiosClient.post(endpoint , body).then(res => res?.data ?? []);
+    return axiosClient.post(endpoint, body).then(res => res?.data ?? []);
 }
