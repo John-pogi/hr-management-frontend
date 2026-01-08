@@ -102,12 +102,12 @@ export default function Employees() {
   const header: TableHeader<EOD>[] = [
     {
       text: '#',
-      key: 'id',
+      key: 'index',
       actionFormatter: (_, index) => index + 1,
     },
     {
       text: "Employee",
-      key: "employee",
+      key: "employee_name",
       valueFormatter: (_value, _index, row: EOD) => {
         const employee = row?.employee;
         if (!employee) return "--";
@@ -121,7 +121,7 @@ export default function Employees() {
     },
     {
       text: "Employee Number",
-      key: "employee",
+      key: "employee_number",
       valueFormatter: (_value, _index, row: EOD) => {
         const employee = row?.employee;
         if (!employee) return "--";

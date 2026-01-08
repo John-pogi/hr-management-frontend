@@ -57,7 +57,7 @@ export default function Employees() {
 
   const { data: departments } = useQuery<departmentResponse>({
     queryKey: ["departmentsAPI"],
-    queryFn: ()=> apiFetch(endpoints.department),
+    queryFn: ()=> apiFetch(endpoints.departments),
     initialData: { data: [] },
   });
   
@@ -173,7 +173,7 @@ export default function Employees() {
   const header: TableHeader<Employee>[] = [
     {
       text: "#",
-      key: "id",
+      key: "index",
       actionFormatter: (_, index) => index + 1,
     },
     {
@@ -195,10 +195,13 @@ export default function Employees() {
     {
       text: "Departments",
       key: "department",
-      valueFormatter: (_value, _index, row: Employee) => {
-        const departments = row?.department;
-        if (!departments || departments.length === 0) return "--";
-        return departments.reduce((prev, curr) => 
+      actionFormatter: (employee: Employee) => {
+        const departments = employee.department;
+        if (!departments) return "--";
+  
+        const department = Array.isArray(departments) ? departments : [departments];
+        
+        return department.reduce((prev, curr) => 
           prev ? `${prev}, ${curr.name}` : curr.name, ""
         );
       },

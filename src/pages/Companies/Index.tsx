@@ -87,7 +87,7 @@ export default function Companies() {
   const header: TableHeader<Company>[] = [
     {
       text: "#",
-      key: "id",
+      key: "index",
       actionFormatter: (_, index) => index + 1,
     },
     {
