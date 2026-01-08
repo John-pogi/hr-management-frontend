@@ -6,7 +6,6 @@ import {
   UserCircleIcon,
   HorizontaLDots,
   CompanyIcon,
-  LeaveRequestIcon,
   CalendarIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
@@ -26,8 +25,13 @@ const navItems: NavItem[] = [
   },
   {
     name: "Leave Requst",
-    icon: <LeaveRequestIcon />,
+    icon: <CalendarIcon />,
     path: "leave-request",
+  },
+  {
+    name: "Leaves",
+    icon: <CalendarIcon />,
+    path: "leaves",
   },
   {
     name: "Companies",
@@ -38,11 +42,6 @@ const navItems: NavItem[] = [
     name: "DTR",
     icon: <CompanyIcon />,
     path: "dtr",
-  },
-  {
-    name: "EOD",
-    icon: <CalendarIcon />,
-    path: "eod",
   },
 ];
 const AppSidebar: React.FC = () => {

@@ -8,8 +8,7 @@ import Index from "./layout/Index";
 import Home from "./pages/Dashboard/Home";
 import Companies from './pages/Companies/Index'; 
 import DTR from './pages/DTR/Index'; 
-
-import Blank from "./pages/Blank";
+import Leaves from "./pages/Leaves/Index";
 
 export const router = createBrowserRouter([
   {
@@ -48,8 +47,8 @@ export const router = createBrowserRouter([
         element: <DTR />,
       },
       {
-        path: "eod",
-        element: <Blank />,
+        path: "leaves",
+        element: <Leaves />,
       },
     ],
   },
