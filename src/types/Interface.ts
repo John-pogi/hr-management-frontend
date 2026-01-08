@@ -6,18 +6,8 @@ export interface Employee {
     email: string;
     position: string;
     contact: string;
-    company: Array<{ 
-        id: number,
-        name: string,
-        code: string,
-        logo: string | null,
-        created_at: string,
-        updated_at: string,
-    }>;
-    department: Array<{
-        id: number,
-        name: string,
-    }>;
+    company: Company[],
+    department: Department[],
 }
 
 export interface Company {
@@ -27,10 +17,12 @@ export interface Company {
     logo: string | null,
     created_at: string,
     updated_at: string,
-    department: Array<{
-        id: number,
-        name: string,
-    }>;
+    department: Department[],
+}
+
+export interface Department {
+    id: number,
+    name: string,
 }
 
 export interface EOD {

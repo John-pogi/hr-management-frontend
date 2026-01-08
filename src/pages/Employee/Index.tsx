@@ -2,12 +2,12 @@ import ComponentFilter from "../../components/common/ComponentFilter";
 import PageMeta from "../../components/common/PageMeta";
 import CustomTable from "../../components/CustomTable";
 import type { ChangeEvent } from "react";
-import { apiGet } from "../../api/ApiHelper";
+import { apiGet, apiFetch } from "../../api/ApiHelper";
 import endpoints from "../../enpoint";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Button from "../../components/ui/button/Button";
-import { Employee, PageQuery, TableHeader } from "../../types/Interface"
+import { Employee, Company, Department, PageQuery, TableHeader } from "../../types/Interface"
 
 export default function Employees() {
   const queryClient = useQueryClient();
@@ -24,11 +24,11 @@ export default function Employees() {
     department: null,
   });
 
-  interface ApiResponse {
+  interface employeeResponse {
     data: Employee[];
   }
   
-  const { data: response } = useQuery<ApiResponse>({
+  const { data: response } = useQuery<employeeResponse>({
     queryKey: ["employees", pageQuery],
     queryFn: () => {console.log(pageQuery.search); return apiGet(endpoints.employees, pageQuery)},
     initialData: { data: [] },
@@ -39,6 +39,26 @@ export default function Employees() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
     },
+  });
+
+  interface companyResponse {
+    data: Company[];
+  }
+
+  const { data: companies } = useQuery<companyResponse>({
+    queryKey: ["companiesAPI"],
+    queryFn: ()=> apiFetch(endpoints.companies),
+    initialData: { data: [] },
+  });
+
+  interface departmentResponse {
+    data: Company[];
+  }
+
+  const { data: departments } = useQuery<departmentResponse>({
+    queryKey: ["departmentsAPI"],
+    queryFn: ()=> apiFetch(endpoints.department),
+    initialData: { data: [] },
   });
   
   const [employee, setEmployee] = useState({
@@ -58,8 +78,10 @@ export default function Employees() {
       placeholder: "Select company",
       options: [
         { value: "", label: "All Companies" },
-        { value: "Journey Tech Inc.", label: "Journey Tech Inc." },
-        { value: "Etc.", label: "Etc." },
+        ...(Array.isArray(companies) ? companies.map((company: Company) => ({ 
+          label: company.name, 
+          value: String(company.id),
+        })) : [])
       ],
       defaultValue: pageQuery.company || undefined,
       onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, company: e.target.value})),
@@ -70,12 +92,11 @@ export default function Employees() {
       label: "Department",
       placeholder: "Select department",
       options: [
-        { value: "", label: "All Departments" },
-        { value: "IT-Dev", label: "IT-Dev" },
-        { value: "CMT", label: "CMT" },
-        { value: "Dev-Ops", label: "Dev-Ops" },
-        { value: "CS", label: "CS" },
-        { value: "HR", label: "HR" },
+        { value: "", label: "All Department" },
+        ...(Array.isArray(departments) ? departments.map((department: Department) => ({ 
+          label: department.name, 
+          value: String(department.id),
+        })) : [])
       ],
       defaultValue: pageQuery.department || undefined,
       onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, department: e.target.value})),
@@ -125,8 +146,10 @@ export default function Employees() {
       label: "Company",
       placeholder: "Select company",
       options: [
-        { value: "Journey Tech Inc.", label: "Journey Tech Inc." },
-        { value: "Etc.", label: "Etc." },
+        ...(Array.isArray(companies) ? companies.map((company: Company) => ({ 
+          label: company.name, 
+          value: String(company.id),
+        })) : [])
       ],
       defaultValue: employee.company,
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setEmployee((prev) => ({...prev, company: e.target.value})),
@@ -137,11 +160,10 @@ export default function Employees() {
       label: "Department",
       placeholder: "Select department",
       options: [
-        { value: "IT-Dev", label: "IT-Dev" },
-        { value: "CMT", label: "CMT" },
-        { value: "Dev-Ops", label: "Dev-Ops" },
-        { value: "CS", label: "CS" },
-        { value: "HR", label: "HR" },
+        ...(Array.isArray(departments) ? departments.map((department: Department) => ({ 
+          label: department.name, 
+          value: String(department.id),
+        })) : [])
       ],
       defaultValue: employee.department,
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setEmployee((prev) => ({...prev, department: e.target.value})),
