@@ -12,9 +12,9 @@ interface ComponentFilterProps {
   addFields?: InputProps[];
   handleAddSubmit?: () => void;
   handleFilterSubmit?: () => void;
-  handleEditSubmit?: () => void;
-  isAddOpen?: boolean;
-  setIsAddOpen?: (open: boolean) => void;
+  onCreateClick?: () => void; 
+  addTitle?: string;
+  addDesc?: string;
 }
 
 const ComponentFilter: React.FC<ComponentFilterProps> = ({
@@ -26,6 +26,9 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
   addFields = [],
   handleAddSubmit = () => {},
   handleFilterSubmit = () => {},
+  onCreateClick: () => {},
+  addTitle,
+  addDesc,
 }) => {
 
   const [modal, setModal] = useState({
@@ -83,10 +86,10 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
           <button
             type="button"
             className="h-11 px-5 py-2.5 border-2 border-gray-300 hover:bg-gray-50 dark:border-[#3E3D4E] dark:hover:bg-white/5 text-blue-500 rounded-md transition-all duration-200 font-medium"
-            onClick={() => setModal((prev) => ({
-              ...prev,
-              add: true,
-            }))}
+            onClick={() => {
+              if (onCreateClick) onCreateClick();
+              setModal((prev) => ({ ...prev, add: true }));
+            }}
           >
             Create +
           </button>
@@ -201,8 +204,8 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
             ...prev,
             add: false,
           }))}
-          title="Create"
-          desc="Create a new entry."
+          title={addTitle || "Create"}
+          desc={addDesc || "Create a new entry."}
           fields={addFields}
           submit={handleAddSubmit}
         />
