@@ -5,24 +5,14 @@ import {
   TableHeader as TableHeaderComponent,
   TableRow,
 } from "./ui/table";
-import { ReactNode } from "react";
+import { TableHeader } from "../types/Interface";
 
-export interface TableHeader<T extends Record<string, any> = Record<string, any>> {
-  text: string;
-  key: keyof T;
-  isDisabled?: boolean;
-  colSpan?: number;
-  rowSpan?: number;
-  actionFormatter?: (row: T, index: number) => ReactNode;
-  valueFormatter?: (value: any, index: number) => ReactNode;
-}
-
-export interface TableProps<T extends Record<string, any>> {
+export interface TableProps<T extends object> {
   header: TableHeader<T>[];
   data?: T[];
 }
 
-export default function CustomTable<T extends Record<string, any>>({
+export default function CustomTable<T extends object>({
   header,
   data = [],
 }: TableProps<T>) {
@@ -48,7 +38,7 @@ export default function CustomTable<T extends Record<string, any>>({
             </TableHeaderComponent>
 
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-              {data.map((dataValue, index) => (
+              {data.map((value, index) => (
                 <TableRow key={index}>
                   {header
                     .filter((heading) => !heading.isDisabled)
@@ -58,11 +48,11 @@ export default function CustomTable<T extends Record<string, any>>({
                         className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
                       >
                         {heading.actionFormatter ? (
-                          heading.actionFormatter(dataValue, index)
+                          heading.actionFormatter(value, index)
                         ) : heading.valueFormatter ? (
-                          heading.valueFormatter(dataValue[heading.key], index)
+                          heading.valueFormatter(value[heading.key as keyof T], index, value)
                         ) : (
-                          dataValue[heading.key]
+                          `${value[heading.key as keyof T] ?? "--"}`
                         )}
                       </TableCell>
                     ))}

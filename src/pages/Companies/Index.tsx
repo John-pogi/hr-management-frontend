@@ -17,10 +17,15 @@ interface Company {
 interface ApiResponse {
   data: Company[];
 }
-import { Company } from "../../types/Company";
-import { CompanyModal } from "../../types/CompanyModal";
 
 export default function Companies() {
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [company, setCompany] = useState({
+    name: "",
+    code: "",
+    department: "",
+  });
   const queryClient = useQueryClient();
 
   const [pageQuery, setPageQuery] = useState<PageQuery>({
@@ -41,18 +46,67 @@ export default function Companies() {
     initialData: { data: [] },
   });
 
+  const openFilterModal = () => {
+    setTimeout(() => {
+      const createBtn = document.querySelector('button[type="button"]') as HTMLButtonElement;
+      if (createBtn && createBtn.innerText.includes("Create")) {
+        
+        createBtn.click();
+      }
+    }, 0);
+  };
+  
+  const resetForm = () => {
+    setCompany({ name: "", code: "", department: ""});
+    setIsEditing(false);
+    setSelectedId(null);
+  }
+
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiGet(`${endpoints.companies}/${id}`),
+    mutationFn: (id: number) => apiDelete(`${endpoints.companies}/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["companies"] });
+      alert("Company deleted successfully.");
     },
+    onError: (error: string) => { 
+      console.error("Error:", error);
+      alert("Failed to delete company"); 
+    }
   });
 
-  const [company, setCompany] = useState({
-    name: "",
-    code: "",
-    department: "",
-  })
+  const saveMutation = useMutation({
+    mutationFn: (formData: any) => {
+      if (isEditing && selectedId) {
+        return apiPut(`${endpoints.companies}/${selectedId}`, formData);
+      }
+      return apiPost(endpoints.companies, formData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["companies"]});
+      alert(isEditing? "Updated successfully!" : "Added successfully");
+      resetForm();
+    },
+    onError: (error) => {
+      console.error("Save Error:", error);
+    }
+  });
+
+  
+
+  const handleEditClick = (companyData: Company) => {
+    setCompany({
+      name: companyData.name,
+      code: companyData.code,
+      department: companyData?.departments?.[0]?.name || "",
+    });
+    setSelectedId(companyData.id);
+    setIsEditing(true);
+    openFilterModal();
+  };
+ 
+  const handleAddSubmit = () => {
+    saveMutation.mutate(company);
+  }
 
   const addFields = [
     {
@@ -60,6 +114,7 @@ export default function Companies() {
       type: "text" as const,
       name: "name",
       label: "Name",
+      key: isEditing ? `edit-name-${selectedId}` : 'add-name',
       placeholder: "Enter company's name",
       defaultValue: company.name,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCompany((prev) => ({...prev, name: e.target.value})),
@@ -69,6 +124,7 @@ export default function Companies() {
       type: "text" as const,
       name: "code",
       label: "Code",
+      key: isEditing ? `edit-name-${selectedId}` : 'add-name',
       placeholder: "Enter company's code",
       defaultValue: company.code,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCompany((prev) => ({...prev, code: e.target.value})),
@@ -77,6 +133,7 @@ export default function Companies() {
       kind: "multi-select" as const,
       name: "department",
       label: "Department",
+      key: isEditing ? `edit-dept-${selectedId}` : 'add-dept',
       placeholder: "Select department",
       options: [
         { value: "IT-Dev", label: "IT-Dev" },
@@ -123,19 +180,20 @@ export default function Companies() {
       actionFormatter: (company) => (
         <ActionButton
           company={company}
-          onEdit={() => console.log("Edit", company.id)}
-          onDelete={() => deleteMutation.mutate(company.id)}
+          onEdit={() => {
+            handleEditClick(company);
+          }}
+          onDelete={() => {
+            const confirmed = window.confirm(`Are you sure you want to want to delete ${company.name}`);
+            if (confirmed) {
+              deleteMutation.mutate(company.id);
+            }
+          }}
           isDeleting={deleteMutation.isPending}
         />
       ),
     },
   ];
-
-  const handleAddSubmit = () => {
-    console.log(company.name);
-    console.log(company.code);
-    console.log(company.department);
-  }
 
   const handleFilterSubmit = () => {
     console.log(pageQuery.company);
@@ -170,7 +228,7 @@ interface ActionButtonProps {
   isDeleting?: boolean;
 }
 
-const ActionButton = ({ onEdit, onDelete }: ActionButtonProps) => (
+const ActionButton = ({ onEdit, onDelete, isDeleting }: ActionButtonProps) => (
   <div className="flex justify-center gap-3">
     <Button size="sm" className="!text-blue-500" variant="outline" onClick={onEdit}>
       <svg
@@ -190,11 +248,11 @@ const ActionButton = ({ onEdit, onDelete }: ActionButtonProps) => (
       </svg>
       Edit
     </Button>
-    <Button size="sm" className="!text-red-500" variant="outline" onClick={onDelete}>
+    <Button size="sm" className="!text-red-500" variant="outline" onClick={onDelete} disabled={isDeleting}>
       <svg  xmlns="http://www.w3.org/2000/svg" width="19" height="24" fill="currentColor" viewBox="0 0 24 24" >
         <path d="M17 6V4c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v2H2v2h2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8h2V6zM9 4h6v2H9zM6 20V8h12v12z"></path><path d="M9 10h2v8H9zM13 10h2v8h-2z"></path>
       </svg>
-      Delete
+      {isDeleting ? "Deleting..." : "Delete"}
     </Button>
   </div>
 );

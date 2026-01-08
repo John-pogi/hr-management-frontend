@@ -1,6 +1,7 @@
 const endpoints = {
     companies: '/companies',
     employees: '/employees',
+    departments: '/departments',
     shifts: '/shifts',
     schedules: '/schedules',
     dtr: '/dtr',

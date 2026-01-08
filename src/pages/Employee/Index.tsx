@@ -1,33 +1,13 @@
-import ComponentFilter, { PageQuery } from "../../components/common/ComponentFilter";
+import ComponentFilter from "../../components/common/ComponentFilter";
 import PageMeta from "../../components/common/PageMeta";
-import CustomTable, { TableHeader } from "../../components/CustomTable";
+import CustomTable from "../../components/CustomTable";
 import type { ChangeEvent } from "react";
-import { apiGet } from "../../api/ApiHelper";
+import { apiGet, apiFetch } from "../../api/ApiHelper";
 import endpoints from "../../enpoint";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Button from "../../components/ui/button/Button";
-
-interface Employee {
-  id: number;
-  fullname: string;
-  email: string;
-  position: string;
-  contact: string;
-  company: Array<{ 
-    id: number,
-    name: string,
-    code: string,
-    logo: string | null,
-    created_at: string,
-    updated_at: string,
-  }>;
-  department: Array<{ name: string }>;
-}
-
-interface ApiResponse {
-  data: Employee[];
-}
+import { Employee, Company, Department, PageQuery, TableHeader } from "../../types/Interface"
 
 export default function Employees() {
   const queryClient = useQueryClient();
@@ -43,8 +23,12 @@ export default function Employees() {
     to: null,
     department: null,
   });
+
+  interface employeeResponse {
+    data: Employee[];
+  }
   
-  const { data: response } = useQuery<ApiResponse>({
+  const { data: response } = useQuery<employeeResponse>({
     queryKey: ["employees", pageQuery],
     queryFn: () => {console.log(pageQuery.search); return apiGet(endpoints.employees, pageQuery)},
     initialData: { data: [] },
@@ -55,6 +39,26 @@ export default function Employees() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
     },
+  });
+
+  interface companyResponse {
+    data: Company[];
+  }
+
+  const { data: companies } = useQuery<companyResponse>({
+    queryKey: ["companiesAPI"],
+    queryFn: ()=> apiFetch(endpoints.companies),
+    initialData: { data: [] },
+  });
+
+  interface departmentResponse {
+    data: Company[];
+  }
+
+  const { data: departments } = useQuery<departmentResponse>({
+    queryKey: ["departmentsAPI"],
+    queryFn: ()=> apiFetch(endpoints.departments),
+    initialData: { data: [] },
   });
   
   const [employee, setEmployee] = useState({
@@ -74,8 +78,10 @@ export default function Employees() {
       placeholder: "Select company",
       options: [
         { value: "", label: "All Companies" },
-        { value: "Journey Tech Inc.", label: "Journey Tech Inc." },
-        { value: "Etc.", label: "Etc." },
+        ...(Array.isArray(companies) ? companies.map((company: Company) => ({ 
+          label: company.name, 
+          value: String(company.id),
+        })) : [])
       ],
       defaultValue: pageQuery.company || undefined,
       onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, company: e.target.value})),
@@ -86,12 +92,11 @@ export default function Employees() {
       label: "Department",
       placeholder: "Select department",
       options: [
-        { value: "", label: "All Departments" },
-        { value: "IT-Dev", label: "IT-Dev" },
-        { value: "CMT", label: "CMT" },
-        { value: "Dev-Ops", label: "Dev-Ops" },
-        { value: "CS", label: "CS" },
-        { value: "HR", label: "HR" },
+        { value: "", label: "All Department" },
+        ...(Array.isArray(departments) ? departments.map((department: Department) => ({ 
+          label: department.name, 
+          value: String(department.id),
+        })) : [])
       ],
       defaultValue: pageQuery.department || undefined,
       onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, department: e.target.value})),
@@ -141,8 +146,10 @@ export default function Employees() {
       label: "Company",
       placeholder: "Select company",
       options: [
-        { value: "Journey Tech Inc.", label: "Journey Tech Inc." },
-        { value: "Etc.", label: "Etc." },
+        ...(Array.isArray(companies) ? companies.map((company: Company) => ({ 
+          label: company.name, 
+          value: String(company.id),
+        })) : [])
       ],
       defaultValue: employee.company,
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setEmployee((prev) => ({...prev, company: e.target.value})),
@@ -153,11 +160,10 @@ export default function Employees() {
       label: "Department",
       placeholder: "Select department",
       options: [
-        { value: "IT-Dev", label: "IT-Dev" },
-        { value: "CMT", label: "CMT" },
-        { value: "Dev-Ops", label: "Dev-Ops" },
-        { value: "CS", label: "CS" },
-        { value: "HR", label: "HR" },
+        ...(Array.isArray(departments) ? departments.map((department: Department) => ({ 
+          label: department.name, 
+          value: String(department.id),
+        })) : [])
       ],
       defaultValue: employee.department,
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setEmployee((prev) => ({...prev, department: e.target.value})),
@@ -167,7 +173,8 @@ export default function Employees() {
   const header: TableHeader<Employee>[] = [
     {
       text: "#",
-      key: "id",
+      key: "index",
+      actionFormatter: (_, index) => index + 1,
     },
     {
       text: "Full Name",
@@ -188,30 +195,30 @@ export default function Employees() {
     {
       text: "Departments",
       key: "department",
-      valueFormatter: (value) => {
-        if (!value || (Array.isArray(value) && value.length === 0)) {
-          return "--";
-        }
-        return (value as Array<{ name: string }>).reduce(
-          (prev, current) => (prev ? `${prev}, ${current.name}` : current.name),
-          ""
+      actionFormatter: (employee: Employee) => {
+        const departments = employee.department;
+        if (!departments) return "--";
+  
+        const department = Array.isArray(departments) ? departments : [departments];
+        
+        return department.reduce((prev, curr) => 
+          prev ? `${prev}, ${curr.name}` : curr.name, ""
         );
       },
     },
     {
       text: "Company",
       key: "company",
-      valueFormatter: (value) => {
-        if (!value || (Array.isArray(value) && value.length === 0)) {
-          return "--";
-        }
-        return Array.isArray(value) ? value[0]?.name || "--" : (value as any)?.name || "--";
+      valueFormatter: (_value, _index, row: Employee) => {
+        const company = row?.company;
+        if (!company || company.length === 0) return "--";
+        return company[0]?.name || "--";
       },
     },
     {
       text: "Action",
-      key: "employee.id" as keyof Employee,
-      actionFormatter: (employee) => (
+      key: "id",
+      actionFormatter: (employee: Employee) => (
         <ActionButton
           employee={employee}
           onView={() => console.log("View", employee.id)}
@@ -252,7 +259,10 @@ export default function Employees() {
           handleAddSubmit={handleAddSubmit}
           handleFilterSubmit={handleFilterSubmit}
         >
-          <CustomTable header={header} data={response.data || []} />
+          <CustomTable<Employee>
+            header={header} 
+            data={response.data || []} 
+          />
         </ComponentFilter>
       </div>
     </>

@@ -1,18 +1,7 @@
 import { useState, useCallback } from "react";
 import Modal, { InputProps } from "../modal";
 import Pagination from "../pagination/Pagination";
-
-export interface PageQuery {
-  per_page: string;
-  page: string;
-  company: string | null;
-  department: string | null;
-  search: string;
-  from: string | null;
-  to: string | null;
-  company_id: string | null;
-  status: string | null;
-}
+import { PageQuery } from "../../types/Interface"
 
 interface ComponentFilterProps {
   children: React.ReactNode;

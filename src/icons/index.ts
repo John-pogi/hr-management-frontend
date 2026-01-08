@@ -55,7 +55,6 @@ import { ReactComponent as ErrorHexaIcon } from "./info-hexa.svg?react";
 import { ReactComponent as ChevronRightIcon } from "./chevron-right.svg?react";
 import { ReactComponent as CompanyIcon } from "./business.svg?react";
 import { ReactComponent as DepartmentIcon } from "./department-store.svg?react";
-import { ReactComponent as LeaveRequestIcon } from "./file-detail.svg?react";
 import { ReactComponent as CalendarIcon } from "./calendar.svg?react";
 
 export {
@@ -116,6 +115,5 @@ export {
   ChatIcon,
   CompanyIcon,
   DepartmentIcon,
-  LeaveRequestIcon,
   CalendarIcon,
 };

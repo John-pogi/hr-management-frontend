@@ -1,33 +1,13 @@
-import ComponentFilter, { PageQuery } from "../../components/common/ComponentFilter";
+import ComponentFilter from "../../components/common/ComponentFilter";
 import PageMeta from "../../components/common/PageMeta";
-import CustomTable, { TableHeader } from "../../components/CustomTable";
+import CustomTable from "../../components/CustomTable";
 import type { ChangeEvent } from "react";
 import { apiGet, apiFetch } from "../../api/ApiHelper";
 import endpoints from "../../enpoint";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { parse, format, minutesToHours, parseISO} from 'date-fns';
-
-interface EOD {
-  id: number;
-  employee_id: number;
-  date: string;
-  time_in: string | null;
-  time_out: string | null;
-  total_minutes: number;
-  shift_start: string;
-  shift_end: string;
-  employee: {
-    id: number;
-    name: string;
-    employee_number: string;
-    company_name: string;
-  };
-}
-
-interface ApiResponse {
-  data: EOD[];
-}
+import { EOD, Company, PageQuery, TableHeader } from "../../types/Interface"
 
 export default function Employees() {
   const [pageQuery, setPageQuery] = useState<PageQuery>({
@@ -41,17 +21,25 @@ export default function Employees() {
     to: null,
     department: null,
   });
+
+  interface EODResponse {
+    data: EOD[];
+  }
   
-  const { data: response } = useQuery<ApiResponse>({
+  const { data: response } = useQuery<EODResponse>({
     queryKey: ["eod", pageQuery],
     queryFn: () => {console.log(pageQuery.search); return apiGet(endpoints.eod, pageQuery)},
     initialData: { data: [] },
   });
 
-  const { data: companies } = useQuery({
+  interface companyResponse {
+    data: Company[];
+  }
+
+  const { data: companies } = useQuery<companyResponse>({
     queryKey: ["companiesAPI"],
     queryFn: ()=> apiFetch(endpoints.companies),
-    initialData: [],
+    initialData: { data: [] },
   });
 
   const filterFields = [
@@ -75,12 +63,12 @@ export default function Employees() {
       label: "Companies",
       placeholder: "Select companies",
       options: [
-      { value: "", label: "All Companies" },
-      ...(Array.isArray(companies) ? companies.map((company: any) => ({ 
-        label: company.name, 
-        value: company.id.toString() 
-      })) : [])
-    ],
+        { value: "", label: "All Companies" },
+        ...(Array.isArray(companies) ? companies.map((company: Company) => ({ 
+          label: company.name, 
+          value: String(company.id),
+        })) : [])
+      ],
       defaultValue: pageQuery.company_id || undefined,
       onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, company_id: e.target.value})),
     },
@@ -111,26 +99,34 @@ export default function Employees() {
     },
   ];
 
-  const header = [
+  const header: TableHeader<EOD>[] = [
     {
       text: '#',
-      key: 'id',
-      actionFormatter: (_row: any, index: number) => index + 1,
+      key: 'index',
+      actionFormatter: (_, index) => index + 1,
     },
     {
-      text: 'Employee',
-      key: 'employee_name',
-      actionFormatter: (row: any) => (
-        <div className="flex flex-col">
-          <span className="font-semibold">{row.employee?.name || '--'}</span>
-          <span className="text-sm text-gray-500">{row.employee?.company_name || '--'}</span>
-        </div>
-      ),
+      text: "Employee",
+      key: "employee_name",
+      valueFormatter: (_value, _index, row: EOD) => {
+        const employee = row?.employee;
+        if (!employee) return "--";
+        return (
+          <div className="flex flex-col">
+            <span className="font-semibold">{employee?.name || '--'}</span>
+            <span className="text-sm text-gray-500">{employee?.company_name || '--'}</span>
+          </div>
+        )
+      },
     },
     {
-      text: 'Employee Number',
-      key: 'employee_number',
-      actionFormatter: (row: any) => row.employee?.employee_number || '--',
+      text: "Employee Number",
+      key: "employee_number",
+      valueFormatter: (_value, _index, row: EOD) => {
+        const employee = row?.employee;
+        if (!employee) return "--";
+        return employee?.employee_number || '--';
+      },
     },
     {
       text: 'Date',
@@ -139,50 +135,59 @@ export default function Employees() {
     {
       text: 'Time In',
       key: 'time_in',
-      valueFormatter: (value: string) => {
-        if (!value) return '--';
-        const timeDate = parse(value, 'HH:mm:ss', new Date());
-        return format(timeDate, 'hh:mm a');
+      valueFormatter: (_value, _index, row: EOD) => {
+        const time = row?.time_in;
+        if (!time) return "--";
+        return format(parse(time, 'HH:mm:ss', new Date()), 'hh:mm a') || '--';
       },
     },
     {
       text: 'Time Out',
       key: 'time_out',
-      valueFormatter: (value: string) => {
-        if (!value) return '--';
-        const timeDate = parse(value, 'HH:mm:ss', new Date());
-        return format(timeDate, 'hh:mm a');
+      valueFormatter: (_value, _index, row: EOD) => {
+        const time = row?.time_out;
+        if (!time) return "--";
+        return format(parse(time, 'HH:mm:ss', new Date()), 'hh:mm a') || '--';
       },
     },
     {
       text: 'Work Duration',
       key: 'total_minutes',
-      valueFormatter: (value: number) => {
-        if (!value) return '--';
-        const hours = minutesToHours(value);
-        const minutesLeft = value - (hours * 60);
+      valueFormatter: (_value, _index, row: EOD) => {
+        const time = row?.total_minutes;
+        if (!time) return "--";
+        const hours = minutesToHours(time);
+        const minutesLeft = time - (hours * 60);
         return `${String(hours).padStart(2, '0')}:${String(minutesLeft).padStart(2, '0')}`;
       },
     },
     {
       text: 'Late Minutes',
       key: 'late_minutes',
-      valueFormatter: (value: number) => value || '--',
+      valueFormatter: (_value, _index, row: EOD) => {
+        const time = row?.late_minutes;
+        if (!time) return "--";
+        return time;
+      },
     },
     {
       text: 'Overtime Minutes',
       key: 'overtime_minutes',
-      valueFormatter: (value: number) => value || '--',
+      valueFormatter: (_value, _index, row: EOD) => {
+        const time = row?.overtime_minutes;
+        if (!time) return "--";
+        return time;
+      },
     },
     {
       text: 'Shift',
       key: 'shift',
-      actionFormatter: (row: any) => {
-        if (!row.shift_start || !row.shift_end) return '--';
+      valueFormatter: (_value, _index, row: EOD) => {
+        if (!row?.shift_start || !row?.shift_end) return '--';
         try {
-          const startShift = parseISO(row.shift_start);
-          const endShift = parseISO(row.shift_end);
-          return `${format(startShift, 'hh:mm a')} - ${format(endShift, 'hh:mm a')}`;
+          const shift_start = parseISO(row.shift_start);
+          const shift_end = parseISO(row.shift_end);
+          return `${format(shift_start, 'hh:mm a')} - ${format(shift_end, 'hh:mm a')}`;
         } catch {
           return '--';
         }
@@ -191,7 +196,11 @@ export default function Employees() {
     {
       text: 'Note',
       key: 'note',
-      actionFormatter: (row: any) => row.on_leave ? 'On Leave' : '--',
+      valueFormatter: (_value, _index, row: EOD) => {
+        const note = row?.note;
+        if (!note) return "--";
+        return note;
+      },
     },
   ];
 
@@ -221,7 +230,10 @@ export default function Employees() {
           handleAddSubmit={handleAddSubmit}
           handleFilterSubmit={handleFilterSubmit}
         >
-          <CustomTable header={header as TableHeader<EOD>[]} data={response.data || []} />
+          <CustomTable<EOD>
+            header={header} 
+            data={response.data || []} 
+          />
         </ComponentFilter>
       </div>
     </>
