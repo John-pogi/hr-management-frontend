@@ -1,30 +1,20 @@
 import { createBrowserRouter } from "react-router-dom";
-import SignIn from "./pages/AuthPages/SignIn";
-import NotFound from "./pages/OtherPage/NotFound";
-import UserProfiles from "./pages/UserProfiles";
-import Videos from "./pages/UiElements/Videos";
-import Images from "./pages/UiElements/Images";
-import Alerts from "./pages/UiElements/Alerts";
-import Badges from "./pages/UiElements/Badges";
-import Avatars from "./pages/UiElements/Avatars";
-import Buttons from "./pages/UiElements/Buttons";
-import LineChart from "./pages/Charts/LineChart";
-import BarChart from "./pages/Charts/BarChart";
-import Calendar from "./pages/Calendar";
-import BasicTables from "./pages/Tables/BasicTables";
-import Employees from "./pages/Manage/Employees";
-import LeaveRequest from "./pages/Manage/LeaveRequest";
-import FormElements from "./pages/Forms/FormElements";
-import Blank from "./pages/Blank";
+import SignIn from "./pages/SignIn/Index";
+import NotFound from "./pages/NotFound/Index";
+import Employees from "./pages/Employee/Index";
+import LeaveRequest from "./pages/LeaveRequest/Index";
 import AppLayout from "./layout/AppLayout";
-import IndexLayout from "./layout/IndexLayout";
+import Index from "./layout/Index";
 import Home from "./pages/Dashboard/Home";
 import Companies from './pages/Companies/Index'; 
+import DTR from './pages/DTR/Index'; 
+
+import Blank from "./pages/Blank";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <IndexLayout />,
+    element: <Index />,
     errorElement: <NotFound />,
     children: [
       {
@@ -53,57 +43,13 @@ export const router = createBrowserRouter([
         path: "companies",
         element: <Companies />,
       },
-      {
-        path: "profile",
-        element: <UserProfiles />,
+       {
+        path: "dtr",
+        element: <DTR />,
       },
       {
-        path: "calendar",
-        element: <Calendar />,
-      },
-      {
-        path: "blank",
+        path: "eod",
         element: <Blank />,
-      },
-      {
-        path: "form-elements",
-        element: <FormElements />,
-      },
-      {
-        path: "basic-tables",
-        element: <BasicTables />,
-      },
-      {
-        path: "alerts",
-        element: <Alerts />,
-      },
-      {
-        path: "avatars",
-        element: <Avatars />,
-      },
-      {
-        path: "badge",
-        element: <Badges />,
-      },
-      {
-        path: "buttons",
-        element: <Buttons />,
-      },
-      {
-        path: "images",
-        element: <Images />,
-      },
-      {
-        path: "videos",
-        element: <Videos />,
-      },
-      {
-        path: "line-chart",
-        element: <LineChart />,
-      },
-      {
-        path: "bar-chart",
-        element: <BarChart />,
       },
     ],
   },
