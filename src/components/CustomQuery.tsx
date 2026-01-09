@@ -1,15 +1,15 @@
 import { useState, useCallback } from "react";
-import Modal, { InputProps } from "../modal";
-import Pagination from "../pagination/Pagination";
-import { PageQuery } from "../../types/Interface"
+import Pagination from "./Pagination";
+import { PageQuery, Field } from "../type/interface";
+import Modal from "./Modal";
 
 interface ComponentFilterProps {
   children: React.ReactNode;
   className?: string;
   pageQuery: PageQuery;
   setPageQuery: React.Dispatch<React.SetStateAction<PageQuery>>;
-  filterFields?: InputProps[];
-  addFields?: InputProps[];
+  filterFields?: Field[];
+  addFields?: Field[];
   handleAddSubmit?: () => void;
   handleFilterSubmit?: () => void;
 }

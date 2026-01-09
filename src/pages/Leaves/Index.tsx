@@ -1,9 +1,9 @@
-import ComponentFilter, { PageQuery } from "../../components/common/ComponentFilter";
+import CustomQuery from "../../components/CustomQuery";
 import PageMeta from "../../components/common/PageMeta";
 import CustomTable, { TableHeader } from "../../components/CustomTable";
 import type { ChangeEvent } from "react";
 import { apiGet, apiFetch } from "../../api/ApiHelper";
-import endpoints from "../../enpoint";
+import endpoints from "../../endpoint";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -178,14 +178,14 @@ export default function Employees() {
         description="This page handle employee CRUD functionalities."
       />
       <div className="space-y-6">
-        <ComponentFilter 
+        <CustomQuery 
           pageQuery={pageQuery} 
           setPageQuery={setPageQuery} 
           filterFields={filterFields} 
           handleFilterSubmit={handleFilterSubmit}
         >
           <CustomTable header={header as TableHeader<EOD>[]} data={leaves.data || []} />
-        </ComponentFilter>
+        </CustomQuery>
       </div>
     </>
   );

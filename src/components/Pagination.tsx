@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "../../icons";
+import { ChevronLeftIcon, ChevronRightIcon } from "../../src/icons";
 
-export default function Pagination({ onClickNext, onClickPrev, onChange, total , isNextDisabled, isPrevDisabled, perPage, page}){
+export default function Pagination({ onClickNext, onClickPrev, onChange, total, isNextDisabled, isPrevDisabled, perPage, page}){
 
     const options = [
         {

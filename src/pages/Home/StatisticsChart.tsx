@@ -1,6 +1,6 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
-import ChartTab from "../common/ChartTab";
+import ChartTab from "../../components/common/ChartTab";
 
 export default function StatisticsChart() {
   const options: ApexOptions = {
@@ -119,7 +119,7 @@ export default function StatisticsChart() {
             Statistics
           </h3>
           <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
-            Target you’ve set for each month
+            Leaves you’ve file for each month
           </p>
         </div>
         <div className="flex items-start w-full gap-3 sm:justify-end">

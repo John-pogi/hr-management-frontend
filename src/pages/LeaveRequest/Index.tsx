@@ -4,10 +4,10 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { EventInput, DateSelectArg } from "@fullcalendar/core";
 import PageMeta from "../../components/common/PageMeta";
-import Modal, { InputProps } from "../../components/modal";
+import Modal from "../../components/Modal";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiFetch, apiPost } from "../../api/ApiHelper";
-import endpoints from "../../enpoint";
+import endpoints from "../../endpoint";
 interface CalendarEvent extends EventInput {
   extendedProps: {
     calendar: string;

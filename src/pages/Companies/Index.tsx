@@ -8,8 +8,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Company, PageQuery, TableHeader } from "../../types/Interface"
 
-
-
 export default function Companies() {
   const queryClient = useQueryClient();
 
