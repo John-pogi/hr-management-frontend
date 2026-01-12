@@ -1,11 +1,12 @@
 import CustomQuery from "../../components/CustomQuery";
 import PageMeta from "../../components/common/PageMeta";
-import CustomTable, { TableHeader } from "../../components/CustomTable";
+import CustomTable from "../../components/CustomTable";
 import type { ChangeEvent } from "react";
 import { apiGet, apiFetch } from "../../api/ApiHelper";
 import endpoints from "../../endpoint.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { PageQuery, TableHeader } from "../../type/interface"
 
 interface EOD {
   id: number;
@@ -48,15 +49,15 @@ export default function Employees() {
     initialData: [],
   });
   
-  const { data: leaves } = useQuery({
+  const { data: leaves } = useQuery<ApiResponse>({
     queryKey: ["leaves", pageQuery],
     queryFn: ()=> apiGet(endpoints.leaveRequest, pageQuery),
-    initialData: [],
+    initialData: { data: [] },
   });
 
   const filterFields = [
     {
-      kind: "select" as const,
+      type: "select" as const,
       name: "status",
       label: "Status",
       placeholder: "Select status",
@@ -70,7 +71,7 @@ export default function Employees() {
       onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, status: e.target.value})),
     },
     {
-      kind: "select" as const,
+      type: "select" as const,
       name: "companies",
       label: "Companies",
       placeholder: "Select companies",
@@ -85,7 +86,6 @@ export default function Employees() {
       onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, company_id: e.target.value})),
     },
     {
-      kind: 'basic' as const,
       type: "date" as const,
       name: "from",
       label: "From",
@@ -93,7 +93,6 @@ export default function Employees() {
       onChange: (e: ChangeEvent<HTMLInputElement>) => setPageQuery((prev) => ({...prev, from: e.target.value})),
     },
     {
-      kind: 'basic' as const,
       type: "date" as const,
       name: "to",
       label: "To",

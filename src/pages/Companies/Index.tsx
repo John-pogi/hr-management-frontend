@@ -1,12 +1,12 @@
-import ComponentFilter from "../../components/common/ComponentFilter";
+import CustomQuery from "../../components/CustomQuery";
 import PageMeta from "../../components/common/PageMeta";
 import CustomTable from "../../components/CustomTable";
 import Button from "../../components/ui/button/Button";
 import { apiGet } from "../../api/ApiHelper";
-import endpoints from "../../enpoint";
+import endpoints from "../../endpoint";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Company, PageQuery, TableHeader } from "../../types/Interface"
+import { Company, PageQuery, TableHeader } from "../../type/interface"
 
 export default function Companies() {
   const queryClient = useQueryClient();
@@ -48,7 +48,6 @@ export default function Companies() {
 
   const addFields = [
     {
-      kind: 'basic' as const,
       type: "text" as const,
       name: "name",
       label: "Name",
@@ -57,7 +56,6 @@ export default function Companies() {
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCompany((prev) => ({...prev, name: e.target.value})),
     },
     {
-      kind: 'basic' as const,
       type: "text" as const,
       name: "code",
       label: "Code",
@@ -66,7 +64,7 @@ export default function Companies() {
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCompany((prev) => ({...prev, code: e.target.value})),
     },
     {
-      kind: "multi-select" as const,
+      type: "multi-select" as const,
       name: "department",
       label: "Department",
       placeholder: "Select department",
@@ -139,7 +137,7 @@ export default function Companies() {
         description="This page handles company CRUD functionalities."
       />
       <div className="space-y-6">
-        <ComponentFilter 
+        <CustomQuery 
           pageQuery={pageQuery} 
           setPageQuery={setPageQuery} 
           addFields={addFields}
@@ -150,7 +148,7 @@ export default function Companies() {
             header={header} 
             data={response.data || []} 
           />
-        </ComponentFilter>
+        </CustomQuery>
       </div>
     </>
   );

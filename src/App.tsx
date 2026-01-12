@@ -35,22 +35,22 @@ export const router = createBrowserRouter([
         path: "employees",
         element: <Employees />,
       },
-      // {
-      //   path: "leave-request",
-      //   element: <LeaveRequest />,
-      // },
-      // {
-      //   path: "companies",
-      //   element: <Companies />,
-      // },
-      //  {
-      //   path: "dtr",
-      //   element: <DTR />,
-      // },
-      // {
-      //   path: "leaves",
-      //   element: <Leaves />,
-      // },
+      {
+        path: "leave-request",
+        element: <LeaveRequest />,
+      },
+      {
+        path: "companies",
+        element: <Companies />,
+      },
+      {
+        path: "dtr",
+        element: <DTR />,
+      },
+      {
+        path: "leaves",
+        element: <Leaves />,
+      },
       {
         path: "blank",
         element: <Blank />,

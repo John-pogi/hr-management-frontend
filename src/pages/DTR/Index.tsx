@@ -1,13 +1,13 @@
-import ComponentFilter from "../../components/common/ComponentFilter";
+import CustomQuery from "../../components/CustomQuery";
 import PageMeta from "../../components/common/PageMeta";
 import CustomTable from "../../components/CustomTable";
 import type { ChangeEvent } from "react";
 import { apiGet, apiFetch } from "../../api/ApiHelper";
-import endpoints from "../../enpoint";
+import endpoints from "../../endpoint";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { parse, format, minutesToHours, parseISO} from 'date-fns';
-import { EOD, Company, PageQuery, TableHeader } from "../../types/Interface"
+import { EOD, Company, PageQuery, TableHeader } from "../../type/interface"
 
 export default function Employees() {
   const [pageQuery, setPageQuery] = useState<PageQuery>({
@@ -44,7 +44,7 @@ export default function Employees() {
 
   const filterFields = [
     {
-      kind: "select" as const,
+      type: "select" as const,
       name: "status",
       label: "Status",
       placeholder: "Select status",
@@ -58,7 +58,7 @@ export default function Employees() {
       onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, status: e.target.value})),
     },
     {
-      kind: "select" as const,
+      type: "select" as const,
       name: "companies",
       label: "Companies",
       placeholder: "Select companies",
@@ -73,7 +73,6 @@ export default function Employees() {
       onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, company_id: e.target.value})),
     },
     {
-      kind: 'basic' as const,
       type: "date" as const,
       name: "from",
       label: "From",
@@ -81,7 +80,6 @@ export default function Employees() {
       onChange: (e: ChangeEvent<HTMLInputElement>) => setPageQuery((prev) => ({...prev, from: e.target.value})),
     },
     {
-      kind: 'basic' as const,
       type: "date" as const,
       name: "to",
       label: "To",
@@ -93,7 +91,7 @@ export default function Employees() {
 
   const addFields = [
     {
-      kind: 'dropzone' as const,
+      type: 'file' as const,
       name: "file",
       label: "File",
     },
@@ -222,7 +220,7 @@ export default function Employees() {
         description="This page handle employee CRUD functionalities."
       />
       <div className="space-y-6">
-        <ComponentFilter 
+        <CustomQuery 
           pageQuery={pageQuery} 
           setPageQuery={setPageQuery} 
           filterFields={filterFields} 
@@ -234,7 +232,7 @@ export default function Employees() {
             header={header} 
             data={response.data || []} 
           />
-        </ComponentFilter>
+        </CustomQuery>
       </div>
     </>
   );

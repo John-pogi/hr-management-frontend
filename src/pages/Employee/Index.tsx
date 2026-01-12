@@ -72,7 +72,7 @@ export default function Employees() {
 
   const filterFields = [
     {
-      kind: "select" as const,
+      type: "select" as const,
       name: "company",
       label: "Company",
       placeholder: "Select company",
@@ -87,7 +87,7 @@ export default function Employees() {
       onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, company: e.target.value})),
     },
     {
-      kind: "select" as const,
+      type: "select" as const,
       name: "department",
       label: "Department",
       placeholder: "Select department",
@@ -105,7 +105,6 @@ export default function Employees() {
 
   const addFields = [
     {
-      kind: 'basic' as const,
       type: "text" as const,
       name: "fullname",
       label: "Full Name",
@@ -114,7 +113,6 @@ export default function Employees() {
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmployee((prev) => ({...prev, fullname: e.target.value})),
     },
     {
-      kind: 'basic' as const,
       type: "email" as const,
       name: "email",
       label: "Email",
@@ -123,7 +121,6 @@ export default function Employees() {
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmployee((prev) => ({...prev, email: e.target.value})),
     },
     {
-      kind: 'basic' as const,
       type: "text" as const,
       name: "position",
       label: "Position",
@@ -132,7 +129,6 @@ export default function Employees() {
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmployee((prev) => ({...prev, position: e.target.value})),
     },
     {
-      kind: 'basic' as const,
       type: "text" as const,
       name: "contact",
       label: "Contact",
@@ -141,7 +137,7 @@ export default function Employees() {
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmployee((prev) => ({...prev, contact: e.target.value})),
     },
     {
-      kind: "select" as const,
+      type: "select" as const,
       name: "company",
       label: "Company",
       placeholder: "Select company",
@@ -155,7 +151,7 @@ export default function Employees() {
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setEmployee((prev) => ({...prev, company: e.target.value})),
     },
     {
-      kind: "multi-select" as const,
+      type: "multi-select" as const,
       name: "department",
       label: "Department",
       placeholder: "Select department",
