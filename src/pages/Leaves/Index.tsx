@@ -3,7 +3,7 @@ import PageMeta from "../../components/common/PageMeta";
 import CustomTable, { TableHeader } from "../../components/CustomTable";
 import type { ChangeEvent } from "react";
 import { apiGet, apiFetch } from "../../api/ApiHelper";
-import endpoints from "../../endpoint";
+import endpoints from "../../endpoint.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 

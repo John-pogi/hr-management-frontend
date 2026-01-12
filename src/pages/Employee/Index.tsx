@@ -1,13 +1,13 @@
-import ComponentFilter from "../../components/common/ComponentFilter";
+import CustomQuery from "../../components/CustomQuery";
 import PageMeta from "../../components/common/PageMeta";
 import CustomTable from "../../components/CustomTable";
 import type { ChangeEvent } from "react";
 import { apiGet, apiFetch } from "../../api/ApiHelper";
-import endpoints from "../../enpoint";
+import endpoints from "../../endpoint.ts";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Button from "../../components/ui/button/Button";
-import { Employee, Company, Department, PageQuery, TableHeader } from "../../types/Interface"
+import { Employee, Company, Department, PageQuery, TableHeader } from "../../type/interface"
 
 export default function Employees() {
   const queryClient = useQueryClient();
@@ -251,7 +251,7 @@ export default function Employees() {
         description="This page handle employee CRUD functionalities."
       />
       <div className="space-y-6">
-        <ComponentFilter 
+        <CustomQuery 
           pageQuery={pageQuery} 
           setPageQuery={setPageQuery} 
           filterFields={filterFields} 
@@ -263,7 +263,7 @@ export default function Employees() {
             header={header} 
             data={response.data || []} 
           />
-        </ComponentFilter>
+        </CustomQuery>
       </div>
     </>
   );

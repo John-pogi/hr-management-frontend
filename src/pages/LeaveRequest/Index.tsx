@@ -7,7 +7,7 @@ import PageMeta from "../../components/common/PageMeta";
 import Modal from "../../components/Modal";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiFetch, apiPost } from "../../api/ApiHelper";
-import endpoints from "../../endpoint";
+import endpoints from "../../endpoint.ts";
 interface CalendarEvent extends EventInput {
   extendedProps: {
     calendar: string;

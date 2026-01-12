@@ -31,10 +31,10 @@ export const router = createBrowserRouter([
         index: true,
         element: <Home />,
       },
-      // {
-      //   path: "employees",
-      //   element: <Employees />,
-      // },
+      {
+        path: "employees",
+        element: <Employees />,
+      },
       // {
       //   path: "leave-request",
       //   element: <LeaveRequest />,
