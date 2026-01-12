@@ -2,7 +2,7 @@ import CustomQuery from "../../components/CustomQuery";
 import PageMeta from "../../components/common/PageMeta";
 import CustomTable from "../../components/CustomTable";
 import Button from "../../components/ui/button/Button";
-import { apiGet } from "../../api/ApiHelper";
+import { apiGet, apiDeletee } from "../../api/ApiHelper";
 import endpoints from "../../endpoint";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -10,6 +10,9 @@ import { Company, PageQuery, TableHeader } from "../../type/interface"
 
 export default function Companies() {
   const queryClient = useQueryClient();
+  //Unfinished/Testing
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
 
   const [pageQuery, setPageQuery] = useState<PageQuery>({
     per_page: "10",
@@ -34,7 +37,7 @@ export default function Companies() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiGet(`${endpoints.companies}/${id}`),
+    mutationFn: (id: number) => apiDelete(`${endpoints.companies}/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["companies"] });
     },
@@ -67,7 +70,38 @@ export default function Companies() {
       ],
     },
   ];
+  // Unfinished/Testing
+  const editFields = [
+    {
+      type: "text" as const,
+      name: "name",
+      label: "Name",
+    },
+    {
+      type: "text" as const,
+      name: "code",
+      label: "Code",
+    },
+    {
+      type: "multi-select" as const,
+      name: "department",
+      label: "Department",
+      options: [
+        { value: "IT-Dev", label: "IT-Dev" },
+        { value: "CMT", label: "CMT" },
+        { value: "Dev-Ops", label: "Dev-Ops" },
+        { value: "CS", label: "CS" },
+        { value: "HR", label: "HR" },
+      ],
+    },
+  ];
 
+  const handleEditClick = (company: Company) => {
+    setSelectedCompany(company);
+    setIsEditModalOpen(true);
+  }
+
+  
   const header: TableHeader<Company>[] = [
     {
       text: "#",
@@ -99,7 +133,7 @@ export default function Companies() {
       actionFormatter: (company: Company) => (
         <ActionButton
           company={company}
-          onEdit={() => console.log("Edit", company.id)}
+          onEdit={() => handleEditClick(company)}
           onDelete={() => deleteMutation.mutate(company.id)}
           isDeleting={deleteMutation.isPending}
         />
@@ -120,6 +154,7 @@ export default function Companies() {
     console.log(e.department);
   }
 
+  
   return (
     <>
       <PageMeta

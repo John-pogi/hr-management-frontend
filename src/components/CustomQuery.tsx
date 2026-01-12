@@ -10,8 +10,10 @@ interface ComponentFilterProps {
   setPageQuery: React.Dispatch<React.SetStateAction<PageQuery>>;
   filterFields?: Field[];
   addFields?: Field[];
+  editFields?: Field[];
   handleAddSubmit?: (e: Record<string, unknown>) => void;
   handleFilterSubmit?: (e: Record<string, unknown>) => void;
+  handleEditSubmit?: (e: Record<string, unknown>) => void;
 }
 
 const ComponentFilter: React.FC<ComponentFilterProps> = ({
@@ -21,13 +23,16 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
   setPageQuery,
   filterFields = [],
   addFields = [],
+  editFields = [],
   handleAddSubmit = () => {},
   handleFilterSubmit = () => {},
+  handleEditSubmit = () => {},
 }) => {
 
   const [modal, setModal] = useState({
     filter: false,
     add: false,
+    edit: false,
   });
 
   const handlePageChange = useCallback((perPage: number) => {
@@ -205,6 +210,19 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
         />
       )}
 
+      {modal.edit && (
+        <Modal
+          style="pop-up"
+          close={() => setModal((prev) => ({
+            ...prev,
+            edit: false,
+          }))}
+          title="Edit"
+          desc="Update company information."
+          fields={editFields}
+          submit={handleEditSubmit}
+        />
+      )}
       <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
         <div className="space-y-6">{children}</div>
       </div>
