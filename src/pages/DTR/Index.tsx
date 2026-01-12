@@ -202,15 +202,29 @@ export default function Employees() {
     },
   ];
 
-  const handleAddSubmit = () => {
-    console.log('test add submit');
+  interface SubmitData {
+    company_id: number;
+    status: string;
+    from: string;
+    to: string;
+    file: string;
   }
 
-  const handleFilterSubmit = () => {
-    console.log(pageQuery.company_id);
-    console.log(pageQuery.status);
-    console.log(pageQuery.from);
-    console.log(pageQuery.to);
+  const handleAddSubmit = (data: Record<string, unknown>) => {
+    const e = data as unknown as SubmitData;
+    console.log(e.file);
+  }
+
+  const handleFilterSubmit = (data: Record<string, unknown>) => {
+    const e = data as unknown as SubmitData;
+    setPageQuery((prev) => ({
+      ...prev,
+      page: "1",
+      company_id: String(e.company_id ?? null),
+      status: e.status ?? null,
+      from: e.from ?? null,
+      to: e.to ?? null,
+    }));
   }
 
   return (

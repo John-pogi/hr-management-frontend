@@ -8,6 +8,8 @@ import Modal from "../../components/Modal";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiFetch, apiPost } from "../../api/ApiHelper";
 import endpoints from "../../endpoint.ts";
+import { InputInterface } from "../../type/interface"
+
 interface CalendarEvent extends EventInput {
   extendedProps: {
     calendar: string;
@@ -89,51 +91,59 @@ const LeaveRequest: React.FC = () => {
     setModal(true);
   };
 
-  const leaveMutation = useMutation({
-    mutationFn: (leave) => {
-      return   apiPost(endpoints.leaveRequest, leave)
-    },
+  interface LeaveParams {
+    employee_id: number;
+    start_date: string | Date;
+    end_date: string | Date;
+    leave_type_id: number;
+  }
+
+  const leaveMutation = useMutation<any, Error, LeaveParams>({
+    mutationFn: (leave: LeaveParams) => apiPost(endpoints.leaveRequest, leave),
     onSuccess: refetchEmployeeLeaves
-  })
+  });
 
-  const handleAddOrUpdateEvent = () => {
-    try {
-      
-      if (selectedEvent) throw console.error("stop update");
-      
-      if (!eventTitle) throw console.error("Please select a request type.");
+  interface SubmitData {
+    requestType: number;
+    promoCode?: string;
+    startDate: string | Date;
+    endDate: string | Date;
+  }
 
-      if (eventTitle === "Promo Leave" && !eventPromoCode) throw console.error("Please provide your promo code.");
-     
-      leaveMutation.mutate({
-        employee_id : employeeID,
-        start_date : eventStartDate,
-        end_date : eventEndDate,
-        leave_type_id : eventTitle,
-      })
-      
-      const newEvent: CalendarEvent = {
-        id: Date.now().toString(),
-        title: eventTitle,
-        start: eventStartDate,
-        end: eventStartDate === eventEndDate ? eventEndDate : processDate(eventEndDate),
-        allDay: true,
-        // extendedProps: { calendar: "warning" },
-      };
-
-      // setEvents((prevEvents) => [...prevEvents, newEvent]);
-    
-      handleCloseModal();
-      resetModalFields();
-    
-    } catch(err) {
-      console.log(err)
-    } finally {
-      console.log(eventTitle)
-      console.log(eventStartDate)
-      console.log(eventEndDate)
-      console.log(eventPromoCode)
+  const handleAddOrUpdateEvent = async (data: Record<string, unknown>) => {
+    const e = data as unknown as SubmitData;
+    if (selectedEvent) {
+      console.error("Cannot create new leave while editing existing event");
+      return;
     }
+    
+    if (!e.requestType) {
+      console.error("Please select a request type.");
+      return;
+    }
+
+    if (e.requestType === 0 && !e.promoCode) {
+      console.error("Please provide your promo code.");
+      return;
+    }
+
+    leaveMutation.mutate(
+      {
+        employee_id: employeeID,
+        start_date: e.startDate,
+        end_date: processDate(e.endDate),
+        leave_type_id: e.requestType,
+      },
+      {
+        onSuccess: () => {
+          handleCloseModal();
+          resetModalFields();
+        },
+        onError: (error) => {
+          console.error("Leave request failed:", error);
+        }
+      }
+    );
   };
 
   const resetModalFields = () => {
@@ -144,43 +154,38 @@ const LeaveRequest: React.FC = () => {
     setSelectedEvent(null);
   };
 
-  const fields = useMemo<InputProps[]>(()=>{
+  const fields = useMemo(()=>{
 
     const leaveTypeFilter =  {
-      kind: 'select',
-      name: "select",
+      type: 'select',
+      name: "requestType",
       label: "Request Type",
       placeholder: "Select an option",
       options:  leaveTypes.map(leaveType => ({value: leaveType.id, label: leaveType.name})),
       defaultValue: eventTitle,
-      onChange: (e) => setEventTitle(e.target.value),
     };
 
     return [
       leaveTypeFilter,
       {
-        kind: 'basic',
         type: "date",
-        name: "start-date",
+        name: "startDate",
         label: "Start Date",
         defaultValue: eventStartDate,
       },
       {
-        kind: 'basic',
         type: "date",
-        name: "end-date",
+        name: "endDate",
         label: "End Date",
         defaultValue: eventEndDate,
         min: eventStartDate,
       },
       ...(eventTitle && eventTitle === "Promo Leave" ? [{
-        kind: 'basic' as const,
         type: "text" as const,
-        name: "promo-code",
+        name: "promoCode",
         label: "Promo Code",
         placeholder: "Enter your promo code",
         defaultValue: eventPromoCode,
-        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEventPromoCode(e.target.value),
       }] : []),
      ];
   }, [leaveTypes, eventStartDate, eventEndDate]);

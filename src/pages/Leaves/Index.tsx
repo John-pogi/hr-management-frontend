@@ -72,25 +72,21 @@ export default function Employees() {
     },
     {
       type: "select" as const,
-      name: "companies",
+      name: "company_id",
       label: "Companies",
       placeholder: "Select companies",
       options: [
-      { value: "", label: "All Companies" },
-      ...(Array.isArray(companies) ? companies.map((company: any) => ({ 
-        label: company.name, 
-        value: company.id.toString() 
-      })) : [])
-    ],
-      defaultValue: pageQuery.company_id || undefined,
-      onChange: (e: ChangeEvent<HTMLSelectElement>) => setPageQuery((prev) => ({...prev, company_id: e.target.value})),
+        { value: "", label: "All Companies" },
+        ...(Array.isArray(companies) ? companies.map((company: any) => ({ 
+          label: company.name, 
+          value: company.id.toString() 
+        })) : [])
+      ],
     },
     {
       type: "date" as const,
       name: "from",
       label: "From",
-      defaultValue: pageQuery.from || undefined,
-      onChange: (e: ChangeEvent<HTMLInputElement>) => setPageQuery((prev) => ({...prev, from: e.target.value})),
     },
     {
       type: "date" as const,
@@ -98,7 +94,6 @@ export default function Employees() {
       label: "To",
       defaultValue: pageQuery.to || undefined,
       min: pageQuery.from || undefined,
-      onChange: (e: ChangeEvent<HTMLInputElement>) => setPageQuery((prev) => ({...prev, to: e.target.value})),
     },
   ];
 
@@ -163,12 +158,24 @@ export default function Employees() {
     },
   ];
 
-  const handleFilterSubmit = () => {
-    console.log(pageQuery.company_id);
-    console.log(pageQuery.status);
-    console.log(pageQuery.from);
-    console.log(pageQuery.to);
+  interface SubmitData {
+    company_id: number;
+    status: string;
+    from: string;
+    to: string;
   }
+
+  const handleFilterSubmit = (data: Record<string, unknown>) => {
+    const e = data as unknown as SubmitData;
+    setPageQuery((prev) => ({
+      ...prev,
+      page: "1",
+      company_id: String(e.company_id ?? null),
+      status: e.status ?? null,
+      from: e.from ?? null,
+      to: e.to ?? null,
+    }));
+  };
 
   return (
     <>

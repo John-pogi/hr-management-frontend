@@ -10,8 +10,8 @@ interface ComponentFilterProps {
   setPageQuery: React.Dispatch<React.SetStateAction<PageQuery>>;
   filterFields?: Field[];
   addFields?: Field[];
-  handleAddSubmit?: () => void;
-  handleFilterSubmit?: () => void;
+  handleAddSubmit?: (e: Record<string, unknown>) => void;
+  handleFilterSubmit?: (e: Record<string, unknown>) => void;
 }
 
 const ComponentFilter: React.FC<ComponentFilterProps> = ({

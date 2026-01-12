@@ -40,28 +40,18 @@ export default function Companies() {
     },
   });
 
-  const [company, setCompany] = useState({
-    name: "",
-    code: "",
-    department: "",
-  })
-
   const addFields = [
     {
       type: "text" as const,
       name: "name",
       label: "Name",
       placeholder: "Enter company's name",
-      defaultValue: company.name,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCompany((prev) => ({...prev, name: e.target.value})),
     },
     {
       type: "text" as const,
       name: "code",
       label: "Code",
       placeholder: "Enter company's code",
-      defaultValue: company.code,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCompany((prev) => ({...prev, code: e.target.value})),
     },
     {
       type: "multi-select" as const,
@@ -75,8 +65,6 @@ export default function Companies() {
         { value: "CS", label: "CS" },
         { value: "HR", label: "HR" },
       ],
-      defaultValue: company.department,
-      onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setCompany((prev) => ({...prev, department: e.target.value})),
     },
   ];
 
@@ -119,15 +107,17 @@ export default function Companies() {
     },
   ];
 
-  const handleAddSubmit = () => {
-    console.log(company.name);
-    console.log(company.code);
-    console.log(company.department);
+  interface SubmitData {
+    name: number;
+    code: string;
+    department: string;
   }
-
-  const handleFilterSubmit = () => {
-    console.log(pageQuery.company);
-    console.log(pageQuery.department);
+  
+  const handleAddSubmit = (data: Record<string, unknown>) => {
+    const e = data as unknown as SubmitData;
+    console.log(e.name);
+    console.log(e.code);
+    console.log(e.department);
   }
 
   return (
@@ -142,7 +132,6 @@ export default function Companies() {
           setPageQuery={setPageQuery} 
           addFields={addFields}
           handleAddSubmit={handleAddSubmit}
-          handleFilterSubmit={handleFilterSubmit}
         >
           <CustomTable<Company>
             header={header} 

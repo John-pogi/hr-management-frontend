@@ -226,18 +226,33 @@ export default function Employees() {
     },
   ];
 
-  const handleAddSubmit = () => {
-    console.log(employee.fullname);
-    console.log(employee.email);
-    console.log(employee.position);
-    console.log(employee.contact);
-    console.log(employee.department);
-    console.log(employee.company);
+  interface SubmitData {
+    fullname?: number;
+    email?: string;
+    position?: string;
+    contact?: string;
+    department?: string;
+    company?: string;
   }
 
-  const handleFilterSubmit = () => {
-    console.log(pageQuery.company);
-    console.log(pageQuery.department);
+  const handleAddSubmit = (data: Record<string, unknown>) => {
+    const e = data as unknown as SubmitData;
+    console.log(e.fullname);
+    console.log(e.email);
+    console.log(e.position);
+    console.log(e.contact);
+    console.log(e.department);
+    console.log(e.company);
+  }
+
+  const handleFilterSubmit = (data: Record<string, unknown>) => {
+    const e = data as unknown as SubmitData;
+    setPageQuery((prev) => ({
+      ...prev,
+      page: "1",
+      department: e.department ?? null,
+      company: e.company ?? null,
+    }));
   }
 
   return (
