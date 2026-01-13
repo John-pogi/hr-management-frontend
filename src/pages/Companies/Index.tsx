@@ -128,6 +128,7 @@ export default function Companies() {
       />
       <div className="space-y-6">
         <CustomQuery 
+          search="Search a company's name..."
           pageQuery={pageQuery} 
           setPageQuery={setPageQuery} 
           addFields={addFields}

@@ -6,7 +6,7 @@ import { apiGet, apiFetch } from "../../api/ApiHelper";
 import endpoints from "../../endpoint.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { PageQuery, TableHeader } from "../../type/interface"
+import { PageQuery, TableHeader, Company, Leave } from "../../type/interface"
 
 interface EOD {
   id: number;
@@ -17,11 +17,15 @@ interface EOD {
   total_minutes: number;
   shift_start: string;
   shift_end: string;
+  start_date: string;
+  end_date: string;
   employee: {
     id: number;
     name: string;
     employee_number: string;
     company_name: string;
+    slCredit: string;
+    vlCredit: string;
   };
 }
 
@@ -77,7 +81,7 @@ export default function Employees() {
       placeholder: "Select companies",
       options: [
         { value: "", label: "All Companies" },
-        ...(Array.isArray(companies) ? companies.map((company: any) => ({ 
+        ...(Array.isArray(companies) ? companies.map((company: Company) => ({ 
           label: company.name, 
           value: company.id.toString() 
         })) : [])
@@ -101,12 +105,12 @@ export default function Employees() {
     {
       text: '#',
       key: 'id',
-      actionFormatter: (_row: any, index: number) => index + 1,
+      actionFormatter: (_row: unknown, index: number) => index + 1,
     },
     {
       text: 'Employee',
       key: 'employee_name',
-      actionFormatter: (row: any) => (
+      actionFormatter: (row: EOD) => (
         <div className="flex flex-col">
           <span className="font-semibold">{row.employee?.name || '--'}</span>
           <span className="text-sm text-gray-500">{row.employee?.company_name || '--'}</span>
@@ -116,7 +120,7 @@ export default function Employees() {
      {
       text: 'Available Credit',
       key: 'employee.deparment_name',
-      actionFormatter: (row: any) => (
+      actionFormatter: (row: EOD) => (
         <div className="grid grid-cols-[23px_1fr]">
           <span className="font-semibold text-gray-500 border-r border-gray-500">SL</span>
           <span className="font-bold ms-2">{row?.employee?.slCredit}</span>
@@ -132,7 +136,7 @@ export default function Employees() {
     {
       text: 'Duration',
       key: 'duration',
-      actionFormatter: (row: any) => (
+      actionFormatter: (row: EOD) => (
         <div>
           <span className="font-bold ms-2">{row?.start_date} <span className="text-gray-500">-</span> {row?.end_date}</span>
         </div>
@@ -141,7 +145,7 @@ export default function Employees() {
     {
       text: 'Request Type',
       key: 'leave_type.name',
-      actionFormatter: (row: any) => (
+      actionFormatter: (row: Leave) => (
         <div className="flex flex-col">
           <span className="font-semibold">{row.leave_type?.name || '--'}</span>
           <span className="text-sm text-gray-500">{row.notes || '--'}</span>
@@ -185,6 +189,7 @@ export default function Employees() {
       />
       <div className="space-y-6">
         <CustomQuery 
+          search="Search an employee's name..."
           pageQuery={pageQuery} 
           setPageQuery={setPageQuery} 
           filterFields={filterFields} 

@@ -8,7 +8,7 @@ import Modal from "../../components/Modal";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiFetch, apiPost } from "../../api/ApiHelper";
 import endpoints from "../../endpoint.ts";
-import { InputInterface } from "../../type/interface"
+import { Leave } from "../../type/interface"
 
 interface CalendarEvent extends EventInput {
   extendedProps: {
@@ -28,7 +28,6 @@ const LeaveRequest: React.FC = () => {
   const [eventStartDate, setEventStartDate] = useState("");
   const [eventEndDate, setEventEndDate] = useState("");
   const [eventPromoCode, setEventPromoCode] = useState("");
-  // const [events, setEvents] = useState<CalendarEvent[]>([]);
   const calendarRef = useRef<FullCalendar>(null);
   const [modal, setModal] = useState(false);
   
@@ -74,7 +73,7 @@ const LeaveRequest: React.FC = () => {
 
   const eventLeaves = useMemo(()=>{
     
-    return employeeLeaves.map(leave => ({
+    return employeeLeaves.map((leave: Leave) => ({
       ...leave,
       title: leave?.leave_type?.name,
       start: leave.start_date,
@@ -161,7 +160,7 @@ const LeaveRequest: React.FC = () => {
       name: "requestType",
       label: "Request Type",
       placeholder: "Select an option",
-      options:  leaveTypes.map(leaveType => ({value: leaveType.id, label: leaveType.name})),
+      options:  leaveTypes.map((leaveType: Leave) => ({value: leaveType.id, label: leaveType.leave_type?.name})),
       defaultValue: eventTitle,
     };
 
