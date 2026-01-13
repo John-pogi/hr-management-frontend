@@ -168,6 +168,7 @@ export default function Modal({ style = "pop-up", close, submit, title, desc, fi
                   </div>
                 ) : FileFields(field) ? (
                   <>
+                    <Label htmlFor={field.name}>{field.label}</Label>
                     <File
                       name={field.name}
                       type={field.type}

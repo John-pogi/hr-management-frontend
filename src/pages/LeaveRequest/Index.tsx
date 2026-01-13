@@ -171,6 +171,13 @@ const LeaveRequest: React.FC = () => {
       defaultValue: eventTitle || undefined,
       onChange: (e: ChangeEvent<HTMLSelectElement>) => setEventTitle(e.target.value),
     },
+    ...(eventTitle && String(eventTitle) === "1" ? [{
+      type: "text" as const,
+      name: "promoCode",
+      label: "Promo Code",
+      placeholder: "Enter your promo code",
+      defaultValue: eventPromoCode,
+    }] : []),
     {
       type: "date" as const,
       name: "startDate",
@@ -184,13 +191,17 @@ const LeaveRequest: React.FC = () => {
       defaultValue: eventEndDate,
       min: eventStartDate,
     },
-    ...(eventTitle && String(eventTitle) === "1" ? [{
-      type: "text" as const,
-      name: "promoCode",
-      label: "Promo Code",
-      placeholder: "Enter your promo code",
-      defaultValue: eventPromoCode,
-    }] : []),
+    // {
+    //   type: "text" as const,
+    //   name: "reason",
+    //   label: "Reason",
+    //   placeholder: "Enter your reason",
+    // },
+    // {
+    //   type: "file" as const,
+    //   name: "file",
+    //   label: "Proof",
+    // },
   ];
 
   return (
