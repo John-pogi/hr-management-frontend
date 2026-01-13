@@ -66,7 +66,7 @@ export default function Modal({ style = "pop-up", close, submit, title, desc, fi
         className={`
           ${
             style === "pop-up"
-              ? "bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto text-start" 
+              ? "custom-scrollbar bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto text-start" 
               : ""
           }
         `}
