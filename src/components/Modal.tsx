@@ -125,6 +125,7 @@ export default function Modal({ style = "pop-up", close, submit, title, desc, fi
                       disabled={!!field.disabled}
                       error={!!field.error}
                       hint={field.hint}
+                      onChange={field.onChange}
                     />
                   </div>
                 ) : MultiSelectFields(field) ? (
@@ -261,6 +262,7 @@ function Select({
   className = "",
   defaultValue = "",
   allSelection,
+  onChange,
 }: SelectField) {
   const [selectedValue, setSelectedValue] = useState<string>(defaultValue);
 
@@ -268,6 +270,7 @@ function Select({
     const value = e.target.value;
     setSelectedValue(value);
   };
+
   return(
     <select
       className={`h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 ${
@@ -276,7 +279,7 @@ function Select({
           : "text-gray-400 dark:text-gray-400"
       } ${className}`}
       value={selectedValue}
-      onChange={handleChange}
+      onChange={onChange ?? handleChange}
       name={name}
     >
       <option

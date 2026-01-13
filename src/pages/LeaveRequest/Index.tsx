@@ -9,6 +9,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiFetch, apiPost } from "../../api/ApiHelper";
 import endpoints from "../../endpoint.ts";
 import { Leave } from "../../type/interface"
+import type { ChangeEvent } from "react";
 
 interface CalendarEvent extends EventInput {
   extendedProps: {
@@ -95,11 +96,17 @@ const LeaveRequest: React.FC = () => {
     start_date: string | Date;
     end_date: string | Date;
     leave_type_id: number;
+    promo_code?: number;
   }
 
-  const leaveMutation = useMutation<any, Error, LeaveParams>({
+  interface LeaveResponse {
+    success: boolean;
+    data?: { id: number };
+  }
+
+  const leaveMutation = useMutation<LeaveResponse, Error, LeaveParams>({
     mutationFn: (leave: LeaveParams) => apiPost(endpoints.leaveRequest, leave),
-    onSuccess: refetchEmployeeLeaves
+    onSuccess: () => refetchEmployeeLeaves(),
   });
 
   interface SubmitData {
@@ -109,19 +116,19 @@ const LeaveRequest: React.FC = () => {
     endDate: string | Date;
   }
 
-  const handleAddOrUpdateEvent = async (data: Record<string, unknown>) => {
+  const handleAddOrUpdateEvent = (data: Record<string, unknown>) => {
     const e = data as unknown as SubmitData;
     if (selectedEvent) {
       console.error("Cannot create new leave while editing existing event");
       return;
     }
     
-    if (!e.requestType) {
+    if (eventTitle === "") {
       console.error("Please select a request type.");
       return;
     }
 
-    if (e.requestType === 0 && !e.promoCode) {
+    if (Number(eventTitle) === 1 && !e.promoCode) {
       console.error("Please provide your promo code.");
       return;
     }
@@ -131,7 +138,8 @@ const LeaveRequest: React.FC = () => {
         employee_id: employeeID,
         start_date: e.startDate,
         end_date: processDate(e.endDate),
-        leave_type_id: e.requestType,
+        leave_type_id: Number(eventTitle),
+        promo_code: Number(e.promoCode),
       },
       {
         onSuccess: () => {
@@ -153,41 +161,37 @@ const LeaveRequest: React.FC = () => {
     setSelectedEvent(null);
   };
 
-  const fields = useMemo(()=>{
-
-    const leaveTypeFilter =  {
-      type: 'select',
+  const fields = [
+    {
+      type: "select" as const,
       name: "requestType",
       label: "Request Type",
-      placeholder: "Select an option",
-      options:  leaveTypes.map((leaveType: Leave) => ({value: leaveType.id, label: leaveType.leave_type?.name})),
-      defaultValue: eventTitle,
-    };
-
-    return [
-      leaveTypeFilter,
-      {
-        type: "date",
-        name: "startDate",
-        label: "Start Date",
-        defaultValue: eventStartDate,
-      },
-      {
-        type: "date",
-        name: "endDate",
-        label: "End Date",
-        defaultValue: eventEndDate,
-        min: eventStartDate,
-      },
-      ...(eventTitle && eventTitle === "Promo Leave" ? [{
-        type: "text" as const,
-        name: "promoCode",
-        label: "Promo Code",
-        placeholder: "Enter your promo code",
-        defaultValue: eventPromoCode,
-      }] : []),
-     ];
-  }, [leaveTypes, eventStartDate, eventEndDate]);
+      placeholder: "Select request type",
+      options:  leaveTypes.map((leaveType: Leave) => ({value: leaveType.id, label: leaveType.name})),
+      defaultValue: eventTitle || undefined,
+      onChange: (e: ChangeEvent<HTMLSelectElement>) => setEventTitle(e.target.value),
+    },
+    {
+      type: "date" as const,
+      name: "startDate",
+      label: "Start Date",
+      defaultValue: eventStartDate,
+    },
+    {
+      type: "date" as const,
+      name: "endDate",
+      label: "End Date",
+      defaultValue: eventEndDate,
+      min: eventStartDate,
+    },
+    ...(eventTitle && String(eventTitle) === "1" ? [{
+      type: "text" as const,
+      name: "promoCode",
+      label: "Promo Code",
+      placeholder: "Enter your promo code",
+      defaultValue: eventPromoCode,
+    }] : []),
+  ];
 
   return (
     <>
@@ -226,7 +230,7 @@ const LeaveRequest: React.FC = () => {
   );
 };
 
-const renderEventContent = (eventInfo: any) => {
+const renderEventContent = (eventInfo: CalendarEvent) => {
   
   let colorType = 'warning';
 

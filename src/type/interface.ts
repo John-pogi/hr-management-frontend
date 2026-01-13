@@ -114,6 +114,7 @@ export interface Leave {
   start_date: string;
   end_date: string;
   status: string;
+  name: string;
   leave_type: { name: string } | null;
   notes: string;
 }
