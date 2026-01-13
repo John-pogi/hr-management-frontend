@@ -96,12 +96,16 @@ export interface EOD {
   overtime_minutes: number;
   shift_start: string;
   shift_end: string;
+  start_date: string;
+  end_date: string;
   note: boolean;
   employee: {
     id: number;
     name: string;
     employee_number: string;
     company_name: string;
+    slCredit: string;
+    vlCredit: string;
   };
 }
 
@@ -110,7 +114,9 @@ export interface Leave {
   start_date: string;
   end_date: string;
   status: string;
+  name: string;
   leave_type: { name: string } | null;
+  notes: string;
 }
 
 export interface PageQuery {

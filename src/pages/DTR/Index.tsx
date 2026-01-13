@@ -235,6 +235,7 @@ export default function Employees() {
       />
       <div className="space-y-6">
         <CustomQuery 
+          search="Search an employee..."
           pageQuery={pageQuery} 
           setPageQuery={setPageQuery} 
           filterFields={filterFields} 

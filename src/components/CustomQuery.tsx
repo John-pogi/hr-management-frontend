@@ -6,6 +6,7 @@ import Modal from "./Modal";
 interface ComponentFilterProps {
   children: React.ReactNode;
   className?: string;
+  search?: string;
   pageQuery: PageQuery;
   setPageQuery: React.Dispatch<React.SetStateAction<PageQuery>>;
   filterFields?: Field[];
@@ -19,6 +20,7 @@ interface ComponentFilterProps {
 const ComponentFilter: React.FC<ComponentFilterProps> = ({
   children,
   className = "",
+  search = "Search something...",
   pageQuery,
   setPageQuery,
   filterFields = [],
@@ -116,7 +118,7 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
             type="search"
             id="search"
             name="search"
-            placeholder="Find a company..."
+            placeholder={search}
             className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px]"
             onChange={(e) => onSearchChange(e.target.value)}
           />

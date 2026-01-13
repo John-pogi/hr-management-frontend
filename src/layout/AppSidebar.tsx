@@ -153,7 +153,7 @@ const AppSidebar: React.FC = () => {
               <Link
                 to={nav.path}
                 className={`menu-item group ${
-                  isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
+                  isActive("/home/" + nav.path) ? "menu-item-active" : "menu-item-inactive"
                 }`}
               >
                 <span
