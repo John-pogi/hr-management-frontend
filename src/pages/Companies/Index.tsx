@@ -2,11 +2,12 @@ import CustomQuery from "../../components/CustomQuery";
 import PageMeta from "../../components/common/PageMeta";
 import CustomTable from "../../components/CustomTable";
 import Button from "../../components/ui/button/Button";
-import { apiGet, apiDeletee } from "../../api/ApiHelper";
+import { apiGet, apiDelete, apiPatch } from "../../api/ApiHelper";
 import endpoints from "../../endpoint";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Company, PageQuery, TableHeader } from "../../type/interface"
+import { compareAsc } from "date-fns";
 
 export default function Companies() {
   const queryClient = useQueryClient();
@@ -41,6 +42,7 @@ export default function Companies() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["companies"] });
     },
+    onError: () => { window.alert("There was a problem deleting the entry...")}
   });
 
   const addFields = [
@@ -101,6 +103,10 @@ export default function Companies() {
     setIsEditModalOpen(true);
   }
 
+  const handleEditSubmit = (company: Company) => {
+    apiPatch(endpoints.companies, company)
+  }
+
   
   const header: TableHeader<Company>[] = [
     {
@@ -135,6 +141,7 @@ export default function Companies() {
           company={company}
           onEdit={() => handleEditClick(company)}
           onDelete={() => deleteMutation.mutate(company.id)}
+          deletingId={deleteMutation.variables}
           isDeleting={deleteMutation.isPending}
         />
       ),
@@ -167,7 +174,12 @@ export default function Companies() {
           pageQuery={pageQuery} 
           setPageQuery={setPageQuery} 
           addFields={addFields}
+          editFields={editFields}
           handleAddSubmit={handleAddSubmit}
+          handleEditSubmit={handleEditSubmit}
+          showEditModal={isEditModalOpen}
+          editData={selectedCompany}
+          onCloseEdit={() => setIsEditModalOpen(false)}
         >
           <CustomTable<Company>
             header={header} 
@@ -183,11 +195,16 @@ interface ActionButtonProps {
   company: Company;
   onEdit: () => void;
   onDelete: () => void;
+  deletingId?: number | null;
   isDeleting?: boolean;
 }
 
-const ActionButton = ({ onEdit, onDelete }: ActionButtonProps) => (
-  <div className="flex justify-center gap-3">
+const ActionButton = ({ onEdit, onDelete, deletingId, isDeleting, company }: ActionButtonProps) => {
+
+  const isThisItemDeleting = isDeleting && deletingId === company.id
+
+  return (
+    <div className="flex justify-center gap-3">
     <Button size="sm" className="!text-blue-500" variant="outline" onClick={onEdit}>
       <svg
         className="fill-current"
@@ -206,11 +223,24 @@ const ActionButton = ({ onEdit, onDelete }: ActionButtonProps) => (
       </svg>
       Edit
     </Button>
-    <Button size="sm" className="!text-red-500" variant="outline" onClick={onDelete}>
-      <svg  xmlns="http://www.w3.org/2000/svg" width="19" height="24" fill="currentColor" viewBox="0 0 24 24" >
-        <path d="M17 6V4c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v2H2v2h2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8h2V6zM9 4h6v2H9zM6 20V8h12v12z"></path><path d="M9 10h2v8H9zM13 10h2v8h-2z"></path>
-      </svg>
-      Delete
+    <Button size="sm" className="!text-red-500" variant="outline" 
+      onClick={() => {
+        const confirmation = confirm("Are you sure you want to delete this entry?");
+        if (confirmation) onDelete();
+      }}
+    >
+      {isThisItemDeleting ? (
+        "Deleting..."
+      ) : (
+        <>
+          <svg  xmlns="http://www.w3.org/2000/svg" width="19" height="24" fill="currentColor" viewBox="0 0 24 24" >
+          <path d="M17 6V4c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v2H2v2h2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8h2V6zM9 4h6v2H9zM6 20V8h12v12z"></path><path d="M9 10h2v8H9zM13 10h2v8h-2z"></path>
+          </svg>
+          Delete
+        </>
+      )}
     </Button>
-  </div>
-);
+  </div> 
+  )
+}
+  

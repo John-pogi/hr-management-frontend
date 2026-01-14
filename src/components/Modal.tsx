@@ -22,9 +22,10 @@ interface Modal {
   close?: () => void;
   disabled?: boolean;
   submit?: (formData: Record<string, unknown>) => void;
+  initialValues?: Record<string, any> | null;
 }
 
-export default function Modal({ style = "pop-up", close, submit, title, desc, fields, disabled = false, }: Modal) {
+export default function Modal({ style = "pop-up", close, submit, title, desc, fields, disabled = false, initialValues = {}}: Modal) {
 
   const handleClose = () => {
     const confirmation = confirm("Do you wish to exit?");
@@ -94,7 +95,110 @@ export default function Modal({ style = "pop-up", close, submit, title, desc, fi
           </button>
           
           <form onSubmit={handleSubmit} className="space-y-3">
-            {fields.map((field, index) => (
+            {fields.map((field, index) => {
+              const valueFromData = initialValues?.[field.name];
+
+              if (MultiSelectFields(field)) {
+                return (
+                  <div key={index} className="space-y-5 sm:space-y-6">
+                    <div>
+                      <Label htmlFor={field.name}>{field.label}</Label>
+                      <MultiSelect 
+                        name={field.name}
+                        type={field.type}
+                        options={field.options}
+                        defaultSelected={valueFromData 
+                          ? (Array.isArray(valueFromData) ? valueFromData.map((v: any) => v.value || v) : [])
+                          : field.defaultSelected
+                        }
+                        placeholder={field.placeholder}
+                        disabled={!!field.disabled}
+                        error={!!field.error}
+                        hint={field.hint}
+                      />
+                    </div>
+                  </div>
+                );
+              }
+
+             return (
+                <div key={index} className="space-y-5 sm:space-y-6">
+                  {CommonFields(field) ? (
+                    <div>
+                      <Label htmlFor={field.name}>{field.label}</Label>
+                      <Input
+                        name={field.name}
+                        type={field.type}
+                        // Logic: Use data if exists, otherwise field.defaultValue
+                        defaultValue={valueFromData ?? field.defaultValue}
+                        placeholder={field.placeholder}
+                        min={field.min}
+                        max={field.max}
+                        step={field.step ?? 1}
+                        disabled={!!field.disabled}
+                        error={!!field.error}
+                        hint={field.hint}
+                        onChange={field.onChange}
+                      />
+                    </div>
+                  ) : SelectFields(field) ? (
+                    <div>
+                      <Label htmlFor={field.name}>{field.label}</Label>
+                      <Select
+                        name={field.name}
+                        type={field.type}
+                        options={field.options}
+                        // Logic: Use data if exists, otherwise field.defaultValue
+                        defaultValue={valueFromData ?? field.defaultValue}
+                        placeholder={field.placeholder}
+                        disabled={!!field.disabled}
+                        error={!!field.error}
+                        hint={field.hint}
+                        onChange={field.onChange}
+                      />
+                    </div>
+                  ) : TextareaFields(field) ? (
+                    <div>
+                      <Label htmlFor={field.name}>{field.label}</Label>
+                      <TextArea
+                        name={field.name}
+                        type={field.type}
+                        // Logic: Use data if exists, otherwise field.defaultValue
+                        defaultValue={valueFromData ?? field.defaultValue}
+                        placeholder={field.placeholder}
+                        rows={field.rows}
+                        disabled={!!field.disabled}
+                        error={!!field.error}
+                        hint={field.hint}
+                      />
+                    </div>
+                  ) : CheckBoxFields(field) ? (
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        name={field.name}
+                        type={field.type}
+                        defaultValue={field.defaultValue}
+                        // Logic: Checked if valueFromData is true (or falls back to default)
+                        checked={valueFromData !== undefined ? !!valueFromData : !!field.checked}
+                        disabled={!!field.disabled}
+                      />
+                    </div>
+                  ) : FileFields(field) ? (
+                    <>
+                      <Label htmlFor={field.name}>{field.label}</Label>
+                      <File
+                        name={field.name}
+                        type={field.type}
+                      />
+                    </>
+                  ) : null}
+                </div>
+              );
+            })}
+
+
+            {/* {fields.map((field, index) => (
+            
               <div key={index} className="space-y-5 sm:space-y-6">
                 {CommonFields(field) ? (
                   <div>
@@ -176,7 +280,7 @@ export default function Modal({ style = "pop-up", close, submit, title, desc, fi
                   </>
                 ) : null}
               </div>
-            ))}
+            ))} */}
 
             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
               <Button size="sm" variant="outline" onClick={handleClose}>

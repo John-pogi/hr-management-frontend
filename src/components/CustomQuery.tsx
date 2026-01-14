@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Pagination from "./Pagination";
 import { PageQuery, Field } from "../type/interface";
 import Modal from "./Modal";
@@ -12,6 +12,9 @@ interface ComponentFilterProps {
   filterFields?: Field[];
   addFields?: Field[];
   editFields?: Field[];
+  editData?: Record<string, any> | null;
+  showEditModal?: boolean;
+  onCloseEdit?: () => void;
   handleAddSubmit?: (e: Record<string, unknown>) => void;
   handleFilterSubmit?: (e: Record<string, unknown>) => void;
   handleEditSubmit?: (e: Record<string, unknown>) => void;
@@ -26,6 +29,9 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
   filterFields = [],
   addFields = [],
   editFields = [],
+  editData = null,
+  showEditModal = false,
+  onCloseEdit = () => {},
   handleAddSubmit = () => {},
   handleFilterSubmit = () => {},
   handleEditSubmit = () => {},
@@ -36,6 +42,13 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
     add: false,
     edit: false,
   });
+
+  useEffect(() => {
+    if (showEditModal) {
+      setModal((prev) => ({ ...prev, edit: true }));
+    }
+  }, [showEditModal]);
+
 
   const handlePageChange = useCallback((perPage: number) => {
     setPageQuery((prev) => ({ 
@@ -215,14 +228,15 @@ const ComponentFilter: React.FC<ComponentFilterProps> = ({
       {modal.edit && (
         <Modal
           style="pop-up"
-          close={() => setModal((prev) => ({
-            ...prev,
-            edit: false,
-          }))}
+          close={() => {
+            setModal((prev) => ({ ...prev, edit: false }));
+            onCloseEdit?.();
+          }}
           title="Edit"
           desc="Update company information."
           fields={editFields}
           submit={handleEditSubmit}
+          initialValues={editData}
         />
       )}
       <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
