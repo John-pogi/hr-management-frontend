@@ -1,158 +1,98 @@
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import PageMeta from "../components/common/PageMeta";
-import { StatCard } from "../components/common/StatCard";
-import { fetchData } from "../utils/fetchData";
-import { useEffect, useState } from "react";
-import Modal, { InputProps } from "../components/modal";
+import Modal from "../components/Modal";
+import {
+  Field,
+} from "../type/interface";
 
 export default function Blank() {
-  const [modal, setModal] = useState(true);
-  const [fetchedData, setFetchedData] = useState<number | null>(null);
-
-  const handleCloseModal = () => {
-    setModal(false);
-  }
-
-  const fields: InputProps[] = [
+  const fields: Field[] = [
     {
-      kind: 'basic',
-      type: "text",
-      name: "test",
-      label: "Text Input",
-      placeholder: "Enter your text",
-      defaultValue: "TEST",
-    },
-    {
-      kind: 'basic',
-      type: "password",
-      name: "password",
-      label: "Password",
-      placeholder: "Enter your password",
-      disabled: true,
-      defaultValue: "TEST",
-    },
-    {
-      kind: 'basic',
-      type: "email",
-      name: "email",
-      label: "Email",
-      placeholder: "Enter your email",
-      success: true,
-      defaultValue: "TEST",
-    },
-    {
-      kind: 'basic',
-      type: "number",
-      name: "number",
-      label: "Number",
-      placeholder: "Enter number",
-      error: true,
-      min: "0",
-      max: "100",
-      step: 1,
-      defaultValue: "TEST",
-    },
-    {
-      kind: 'select',
-      name: "select",
-      label: "Category",
-      placeholder: "Select an option",
+      type: "select" as const,
+      name: "status",
+      label: "Status",
+      placeholder: "Select status",
       options: [
-        { value: "marketing", label: "Marketing" },
-        { value: "template", label: "Template" },
-        { value: "development", label: "Development" },
+        { value: "", label: "All Status" },
+        { value: "absent", label: "Absent" },
+        { value: "partial", label: "Partial" },
+        { value: "present", label: "Present" },
       ],
-      defaultValue: "TEST",
     },
     {
-      kind: 'textarea',
-      name: "textarea1",
-      label: "Description (Disabled)",
-      placeholder: "Enter description",
-      rows: 4,
-      disabled: true,
-      defaultValue: "TEST",
+      type: "textarea" as const,
+      name: "companies",
+      label: "Companies",
     },
     {
-      kind: 'textarea',
-      name: "textarea2",
-      label: "Description",
-      placeholder: "Enter description",
-      rows: 6,
-      hint: "Maximum 500 characters",
-      defaultValue: "TEST",
+      type: "time" as const,
+      name: "from",
+      label: "From",
     },
     {
-      kind: 'file',
-      label: "File Upload",
+      type: "date" as const,
+      name: "to",
+      label: "To",
     },
     {
-      kind: 'checkbox',
-      label: "Enable notifications",
-      checked: false,
+      type: "checkbox" as const,
+      name: "a",
+      defaultValue: "A",
     },
     {
-      kind: 'dropzone',
-      label: "Image Upload",
-      name: "images",
+      type: "checkbox" as const,
+      name: "b",
+      defaultValue: "B",
     },
     {
-      kind: 'multi-select',
-      label: "Skills",
+      type: "checkbox" as const,
+      name: "c",
+      defaultValue: "c",
+    },
+    {
+      type: "multi-select" as const,
+      name: "department",
+      label: "Department",
+      placeholder: "Select department",
       options: [
-        { value: "react", label: "React" },
-        { value: "typescript", label: "TypeScript" },
-        { value: "tailwind", label: "Tailwind CSS" }
+        { value: "IT-Dev", label: "IT-Dev" },
+        { value: "CMT", label: "CMT" },
+        { value: "Dev-Ops", label: "Dev-Ops" },
+        { value: "CS", label: "CS" },
+        { value: "HR", label: "HR" },
       ],
-      defaultSelected: [],
-    }
-  ];
+    },
+    {
+      type: 'file' as const,
+      name: "file",
+      label: "File",
+    },
+  ]
 
-
-  useEffect(() => {
-    async function loadLeaves() {
-      try {
-        await fetchData("/api/leaves");
-        setFetchedData(null);
-      } catch (error) {
-        if (error instanceof Error) {
-          //
-        }
-      } finally {
-        //
-      }
-    }
-    loadLeaves();
-  }, []);
-
+  const handleSubmit = (formData: Record<string, unknown>) => {
+    console.log('Form submitted:', formData);
+  };
   return (
     <div>
       <PageMeta
-        title="Leaves Dashboard | TailAdmin"
-        description="This is Leaves Dashboard for TailAdmin"
+        title="React.js Blank Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+        description="This is React.js Blank Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
       />
-      <PageBreadcrumb pageTitle="Leaves" />
-      <div className="min-h-7 rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12 flex space-x-4 text-center  ">
-        <StatCard
-          label="Unspent Leaves:"
-          count={fetchedData ?? 0}
-          color="bg-green-100 text-green-700"
-          className="text-center"
-        ></StatCard>
-        <StatCard
-          label="Spent Leaves:"
-          count={fetchedData ?? 0}
-          color="bg-green-100 text-green-700"
-        ></StatCard>
-        <StatCard
-          label="Remaining Leaves:"
-          count={fetchedData ?? 0}
-          color="bg-green-100 text-green-700"
-        ></StatCard>
-      </div>
+      <PageBreadcrumb pageTitle="Blank Page" />
+      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+        <div className="mx-auto w-full max-w-[630px] text-center">
+          <h3 className="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
+            Card Title Here
+          </h3>
 
-      {!modal && <button onClick={() => setModal(true)} className="rounded-full px-5 py-3 bg-[rgba(0,0,255,0.5)] hover:opacity-90">Open Modal</button>}
-      {modal && <Modal style="pop-up" close={handleCloseModal} title="haha" desc="hahaha" fields={fields} />}
+          <p className="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
+            Start putting content on grids or panels, you can also use different
+            combinations of grids.Please check out the dashboard and other pages
+          </p>
+
+          <Modal style={"view"} fields={fields} submit={handleSubmit} />
+        </div>
+      </div>
     </div>
   );
 }

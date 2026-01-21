@@ -37,6 +37,7 @@ import { ReactComponent as EyeCloseIcon } from "./eye-close.svg?react";
 import { ReactComponent as TimeIcon } from "./time.svg?react";
 import { ReactComponent as CopyIcon } from "./copy.svg?react";
 import { ReactComponent as ChevronLeftIcon } from "./chevron-left.svg?react";
+import { ReactComponent as ChevronRightIcon } from "./chevron-right.svg?react";
 import { ReactComponent as UserCircleIcon } from "./user-circle.svg?react";
 import { ReactComponent as TaskIcon } from "./task-icon.svg?react";
 import { ReactComponent as ListIcon } from "./list.svg?react";
@@ -52,8 +53,8 @@ import { ReactComponent as ChatIcon } from "./chat.svg?react";
 import { ReactComponent as MoreDotIcon } from "./moredot.svg?react";
 import { ReactComponent as AlertHexaIcon } from "./alert-hexa.svg?react";
 import { ReactComponent as ErrorHexaIcon } from "./info-hexa.svg?react";
-import { ReactComponent as ChevronRightIcon } from "./chevron-right.svg?react";
-
+import { ReactComponent as CompanyIcon } from "./business.svg?react";
+import { ReactComponent as CalendarIcon } from "./calendar.svg?react";
 export {
   ErrorHexaIcon,
   AlertHexaIcon,
@@ -110,4 +111,6 @@ export {
   HorizontaLDots,
   ChevronUpIcon,
   ChatIcon,
+  CompanyIcon,
+  CalendarIcon
 };

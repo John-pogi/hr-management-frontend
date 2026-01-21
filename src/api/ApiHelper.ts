@@ -15,3 +15,10 @@ export function apiFetch(endpoint: string, params?: object | null){
         per_page: Number.MIN_SAFE_INTEGER
     }).then(res => res?.data ?? [])
 }
+
+export function apiPost(endpoint: string, body?: object | null){
+  
+    const axiosClient = getClient();
+
+    return axiosClient.post(endpoint , body).then(res => res?.data ?? []);
+}
